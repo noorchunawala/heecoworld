@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Educational Industry Visits UAE | HeecoWorld",
-
   description:
     "HeecoWorld helps schools, colleges and institutions across the UAE organise educational industry visits, career awareness programs and experiential learning opportunities.",
-
   keywords: [
     "Industrial Visits UAE",
     "Educational Tours UAE",
@@ -18,9 +17,8 @@ export const metadata: Metadata = {
     "HeecoWorld",
     "HEECO",
   ],
-
   openGraph: {
-    title: "HeecoWorld",
+    title: "Educational Industry Visits UAE | HeecoWorld",
     description:
       "Connecting education with real-world industry exposure.",
     url: "https://heecoworld.com",
@@ -29,3 +27,15 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
