@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="buildingGradient" x1="96" y1="72" x2="420" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#0B3B8C"/>
+    </linearGradient>
+    <linearGradient id="bookGradient" x1="64" y1="300" x2="448" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#0B3B8C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Star -->
+  <path d="M256 34L267 68L301 79L267 90L256 124L245 90L211 79L245 68L256 34Z" fill="#2563EB"/>
+
+  <!-- Industry skyline -->
+  <path d="M94 282V192L136 202L146 282H166V142H230V282H250V96H318V282H338V188L376 176L414 204V282H448V332H64V282H94Z" fill="url(#buildingGradient)"/>
+
+  <!-- Windows -->
+  <rect x="188" y="182" width="16" height="28" rx="2" fill="white"/>
+  <rect x="218" y="182" width="16" height="28" rx="2" fill="white"/>
+  <rect x="278" y="132" width="16" height="28" rx="2" fill="white"/>
+  <rect x="306" y="132" width="16" height="28" rx="2" fill="white"/>
+  <rect x="278" y="184" width="16" height="28" rx="2" fill="white"/>
+  <rect x="306" y="184" width="16" height="28" rx="2" fill="white"/>
+  <rect x="388" y="236" width="18" height="24" rx="2" fill="white"/>
+
+  <!-- Pathway / river -->
+  <path d="M280 288C262 254 298 230 344 208C282 214 220 238 210 276C204 302 226 320 228 352C229 376 216 396 198 416H296C282 390 278 364 292 340C309 310 352 296 418 286C360 278 308 278 280 288Z" fill="white"/>
+
+  <!-- Open book -->
+  <path d="M64 324C130 318 183 326 242 360V426C186 392 126 382 64 390V324Z" fill="url(#bookGradient)"/>
+  <path d="M448 324C382 318 329 326 270 360V426C326 392 386 382 448 390V324Z" fill="url(#bookGradient)"/>
+  <path d="M64 404C132 396 190 408 242 444" stroke="#0B3B8C" stroke-width="18" stroke-linecap="round"/>
+  <path d="M448 404C380 396 322 408 270 444" stroke="#0B3B8C" stroke-width="18" stroke-linecap="round"/>
+  <path d="M242 360C248 370 252 390 256 444C260 390 264 370 270 360" stroke="white" stroke-width="12" stroke-linecap="round"/>
+</svg>

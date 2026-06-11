@@ -17,6 +17,11 @@ export const metadata: Metadata = {
     "HeecoWorld",
     "HEECO",
   ],
+  icons: {
+  icon: "/favicon.svg",
+  shortcut: "/favicon-32x32.png",
+  apple: "/apple-touch-icon.png",
+},
   openGraph: {
     title: "Educational Industry Visits UAE | HeecoWorld",
     description:
