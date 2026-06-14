@@ -1,7 +1,14 @@
 import SchoolMatchCard from "@/components/school/SchoolMatchCard";
 import { sampleMatchedSchools } from "@/app/heeco-match/schools";
+import { rankSchools, type MatchAnswers } from "@/lib/matching";
 
-export default function ResultsScreen() {
+type ResultsScreenProps = {
+  answers: MatchAnswers;
+};
+
+export default function ResultsScreen({ answers }: ResultsScreenProps) {
+  const rankedSchools = rankSchools(sampleMatchedSchools, answers);
+
   return (
     <div className="mx-auto max-w-5xl py-12">
       <div className="mb-10 text-center">
@@ -19,8 +26,14 @@ export default function ResultsScreen() {
       </div>
 
       <div className="grid gap-5">
-        {sampleMatchedSchools.map((school) => (
-          <SchoolMatchCard key={school.id} school={school} />
+        {rankedSchools.map((school, index) => (
+          <SchoolMatchCard
+            key={school.id}
+            school={{
+              ...school,
+              badge: index === 0 ? "Best Match" : school.badge,
+            }}
+          />
         ))}
       </div>
     </div>

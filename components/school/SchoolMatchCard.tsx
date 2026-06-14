@@ -3,10 +3,16 @@ import { CheckCircle2, Trophy } from "lucide-react";
 
 type SchoolMatchCardProps = {
   school: {
+    id: string;
     name: string;
-    location: string;
-    curriculum: string;
-    fees: string;
+    emirate: string;
+    curricula: string[];
+    feeRange: {
+      min: number;
+      max: number;
+    };
+    grades: string[];
+    priorities: string[];
     matchScore: number;
     matchLabel: string;
     badge: string | null;
@@ -28,7 +34,7 @@ export default function SchoolMatchCard({ school }: SchoolMatchCardProps) {
         <div>
           <h2 className="text-2xl font-bold text-slate-950">{school.name}</h2>
           <p className="mt-2 text-slate-600">
-            {school.location} • {school.curriculum} • {school.fees}
+            {school.emirate} • {school.curricula.join(", ")} • AED {school.feeRange.min.toLocaleString()} - AED {school.feeRange.max.toLocaleString()}
           </p>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2">

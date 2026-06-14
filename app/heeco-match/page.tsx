@@ -66,7 +66,7 @@ if (screen === "results") {
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10 ">
       
-       <ResultsScreen />
+       <ResultsScreen answers={answers} />
       
     </main>
   );
