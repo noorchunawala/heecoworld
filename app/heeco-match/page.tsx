@@ -27,6 +27,7 @@ export default function HeecoMatchPage() {
     <main className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10">
      <QuestionScreen
   question={currentQuestion}
+  totalQuestions={heecoMatchQuestions.length}
   selectedAnswer={answers[currentQuestion.id] as string | undefined}
  onSelect={(answerId) => {
   setAnswers((prev) => ({
@@ -47,8 +48,7 @@ export default function HeecoMatchPage() {
   }, 250);
 }}
   
-  onBack={() => setCurrentQuestionIndex((prev) => prev - 1)}
-  canGoBack={currentQuestionIndex > 0}
+ 
 />
     </main>
   );
