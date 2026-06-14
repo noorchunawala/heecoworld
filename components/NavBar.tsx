@@ -5,11 +5,11 @@ import { Menu, X } from "lucide-react";
 import Container from "./Container";
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Industries", href: "#industries" },
-  { label: "Process", href: "#process" },
-  { label: "Contact", href: "#contact" },
+  { label: "Schools", href: "/schools" },
+  { label: "Compare", href: "/compare" },
+  { label: "School Match", href: "/school-match" },
+  { label: "Experiences", href: "/experiences" },
+  { label: "For Schools", href: "/for-schools" },
 ];
 
 export default function Navbar() {
@@ -24,9 +24,21 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-slate-200">
       <Container>
         <div className="h-20 flex items-center justify-between">
-          <a href="#" className="text-xl font-bold">
-            HeecoWorld
-          </a>
+          <div className="flex items-center gap-3">
+  <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold">
+    H
+  </div>
+
+  <div>
+    <h1 className="text-lg font-bold tracking-tight">
+      HeecoWorld
+    </h1>
+
+    <p className="text-xs text-slate-500">
+      Education Marketplace
+    </p>
+  </div>
+</div>
 
           <nav className="hidden md:flex gap-8 text-sm">
             {navLinks.map((link) => (
@@ -40,7 +52,7 @@ export default function Navbar() {
             onClick={openEnquiry}
             className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition"
           >
-            Request Proposal
+            Book a School Tour
           </button>
 
           <button
@@ -69,7 +81,7 @@ export default function Navbar() {
                 onClick={openEnquiry}
                 className="w-full bg-blue-600 text-white px-5 py-3 rounded-xl"
               >
-                Request Proposal
+               Book a School Tour
               </button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import Navbar from "@/components/NavBar";
 import Hero from "@/components/Hero";
+import HeroV2 from "@/components/HeroV2";
 import About from "@/components/About";
 import MissionVision from "@/components/MissionVision";
 import CollaborationStrip from "@/components/CollaborationStrip";
@@ -18,7 +19,7 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <Hero />
+      <HeroV2 />
        <About />
       <MissionVision />
       <Services />

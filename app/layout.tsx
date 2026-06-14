@@ -1,22 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { siteConfig } from "@/constants/site";
 
 export const metadata: Metadata = {
-  title: "Educational Industry Visits UAE | HeecoWorld",
-  description:
-    "HeecoWorld helps schools, colleges and institutions across the UAE organise educational industry visits, career awareness programs and experiential learning opportunities.",
-  keywords: [
-    "Industrial Visits UAE",
-    "Educational Tours UAE",
-    "School Industry Visits",
-    "College Industrial Visits",
-    "Career Awareness Programs",
-    "Experiential Learning UAE",
-    "Educational Visits Dubai",
-    "Educational Visits Sharjah",
-    "HeecoWorld",
-    "HEECO",
-  ],
+  title: siteConfig.title,
+  description:siteConfig.description
+    ,
+  keywords: siteConfig.keywords,
   icons: {
   icon: "/favicon.svg",
   shortcut: "/favicon-32x32.png",
