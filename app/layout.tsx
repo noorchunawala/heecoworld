@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { siteConfig } from "@/constants/site";
+import Navbar from "@/components/NavBar";
+import Footer from "@/components/Footer";
+import EnquiryModal from "@/components/EnquiryModel";
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -30,7 +33,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+         <Navbar />
+        {children}
+         <Footer />
+          <EnquiryModal />
+        </body>
     </html>
   );
 }

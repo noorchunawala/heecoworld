@@ -10,7 +10,16 @@ export type MatchableSchool = {
     max: number;
   };
   grades: string[];
+  reasons: string[];
   priorities: string[];
+  location: {
+  address: string;
+  lat: number;
+  lng: number;
+};
+heroVideoUrl?: string | null;
+heroVideoPosterUrl?: string | null;
+heroImageUrl?: string | null;
 };
 
 export type MatchResult = {

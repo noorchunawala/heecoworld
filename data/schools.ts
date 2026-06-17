@@ -2,6 +2,7 @@ import type { MatchableSchool } from "@/lib/matching";
 
 export const sampleMatchedSchools: MatchableSchool[] = [
   {
+    heroVideoUrl:"/video/heecoworld-school-hero-sample.mp4",
     id: "gems-modern-academy",
     name: "GEMS Modern Academy",
     emirate: "dubai",
@@ -12,6 +13,16 @@ export const sampleMatchedSchools: MatchableSchool[] = [
     },
     grades: ["kg1", "kg2", "grade-1-5", "grade-6-12"],
     priorities: ["academics", "sports"],
+    location: {
+  address: "Dubai, United Arab Emirates",
+  lat: 25.2048,
+  lng: 55.2708,
+},
+reasons: [
+  "Matches your preferred curriculum",
+  "Fits your selected budget range",
+  "Located in your preferred emirate",
+],
   },
   {
     id: "delhi-private-school-sharjah",
@@ -24,6 +35,16 @@ export const sampleMatchedSchools: MatchableSchool[] = [
     },
     grades: ["kg1", "kg2", "grade-1-5", "grade-6-12"],
     priorities: ["academics", "affordable-fees"],
+     location: {
+  address: "Dubai, United Arab Emirates",
+  lat: 25.2048,
+  lng: 55.2708,
+},
+reasons: [
+  "Matches your preferred curriculum",
+  "Fits your selected budget range",
+  "Located in your preferred emirate",
+],
   },
   {
     id: "sample-british-school-dubai",
@@ -36,5 +57,15 @@ export const sampleMatchedSchools: MatchableSchool[] = [
     },
     grades: ["kg1", "kg2", "grade-1-5"],
     priorities: ["academics", "near-home"],
+     location: {
+  address: "Dubai, United Arab Emirates",
+  lat: 25.2048,
+  lng: 55.2708,
+},
+reasons: [
+  "Matches your preferred curriculum",
+  "Fits your selected budget range",
+  "Located in your preferred emirate",
+],
   },
 ];
