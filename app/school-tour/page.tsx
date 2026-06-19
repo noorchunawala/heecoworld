@@ -50,6 +50,10 @@ export default function SchoolTourPage() {
   const [isPrefilledFromUrl, setIsPrefilledFromUrl] = useState(false);
   const [selectedSchoolIds, setSelectedSchoolIds] = useState<string[]>([]);
   const [formData, setFormData] = useState<TourFormData>(initialFormData);
+  const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const minVisitDate = tomorrow.toISOString().split("T")[0];
+const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     async function loadSchools() {
@@ -113,20 +117,43 @@ export default function SchoolTourPage() {
     event.preventDefault();
     setSuccessMessage("");
 
-    if (selectedSchools.length === 0) {
-      alert("Please select at least one school.");
-      return;
-    }
+   if (selectedSchools.length === 0) {
+  alert("Please select at least one school.");
+  return;
+}
 
-    if (!formData.parentName.trim()) {
-      alert("Please enter parent name.");
-      return;
-    }
+if (!formData.parentName.trim()) {
+  alert("Please enter parent name.");
+  return;
+}
 
-    if (!formData.mobile.trim()) {
-      alert("Please enter mobile number.");
-      return;
-    }
+if (!formData.mobile.trim()) {
+  alert("Please enter mobile number.");
+  return;
+}
+
+if (!formData.email.trim()) {
+  alert("Please enter email address.");
+  return;
+}
+
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+  alert("Please enter a valid email address.");
+  return;
+}
+
+if (!formData.childGrade.trim()) {
+  alert("Please enter your child’s grade.");
+  return;
+}
+if (!formData.preferredDate) {
+  alert("Please select preferred visit date.");
+  return;
+}
+if (formData.preferredDate < minVisitDate) {
+  alert("Preferred visit date should be from tomorrow onwards.");
+  return;
+}
 
     setSubmitting(true);
 
@@ -161,10 +188,10 @@ if (!result.success) {
   return;
 }
 
+setSubmitted(true);
 setSuccessMessage(
-  "Your tour request has been submitted successfully. Your selected school(s) will contact you directly."
+  "Your tour request has been successfully submitted."
 );
-
 setFormData(initialFormData);
   };
 
@@ -232,9 +259,42 @@ setFormData(initialFormData);
                   {successMessage}
                 </div>
               )}
+{submitted ? (
+  <div className="rounded-[1.5rem] border border-green-200 bg-green-50 p-6 text-center">
+    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
+      <CheckCircle2 className="h-8 w-8 text-green-700" />
+    </div>
 
-              <form className="grid gap-5" onSubmit={handleSubmit}>
-                <div>
+    <h3 className="mt-4 text-2xl font-semibold text-[#071B33]">
+      Tour request submitted
+    </h3>
+
+    <p className="mt-3 text-sm leading-6 text-slate-700">
+      Your selected school(s) have been notified and will contact you directly
+      using the details you provided.
+    </p>
+
+    <p className="mt-3 text-sm leading-6 text-slate-600">
+      If you do not hear back within 3 working days, please contact us at{" "}
+      <span className="font-semibold text-[#071B33]">
+        info@heecoworld.com
+      </span>.
+    </p>
+
+    <button
+      type="button"
+      onClick={() => {
+        setSubmitted(false);
+        setSelectedSchoolIds([]);
+      }}
+      className="mt-6 rounded-full bg-[#071B33] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0B2A4D]"
+    >
+      Submit another request
+    </button>
+  </div>
+) : (
+  <form className="grid gap-5" onSubmit={handleSubmit}>
+    <div>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <label className="block text-sm font-semibold text-[#071B33]">
                       Selected schools
@@ -354,6 +414,7 @@ setFormData(initialFormData);
                     icon={<Mail className="h-4 w-4" />}
                     placeholder="you@example.com"
                     value={formData.email}
+                    required
                     onChange={(value) => updateFormField("email", value)}
                   />
 
@@ -362,6 +423,7 @@ setFormData(initialFormData);
                     icon={<School className="h-4 w-4" />}
                     placeholder="Example: Year 3 / Grade 2"
                     value={formData.childGrade}
+                    required
                     onChange={(value) => updateFormField("childGrade", value)}
                   />
                 </div>
@@ -372,6 +434,7 @@ setFormData(initialFormData);
                     type="date"
                     icon={<CalendarDays className="h-4 w-4" />}
                     value={formData.preferredDate}
+                    min={minVisitDate}
                     onChange={(value) =>
                       updateFormField("preferredDate", value)
                     }
@@ -423,7 +486,9 @@ setFormData(initialFormData);
                 >
                   {submitting ? "Submitting..." : "Submit Tour Request"}
                 </Button>
-              </form>
+  </form>
+)}
+              
             </div>
           </div>
 
@@ -540,6 +605,7 @@ function FormField({
   value,
   onChange,
   required = false,
+  min
 }: {
   label: string;
   icon: React.ReactNode;
@@ -548,6 +614,7 @@ function FormField({
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  min?:string
 }) {
   return (
     <div>
@@ -563,6 +630,7 @@ function FormField({
         <input
           type={type}
           value={value}
+           min={min}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           required={required}

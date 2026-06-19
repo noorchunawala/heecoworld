@@ -1,15 +1,58 @@
 import SchoolMatchCard from "@/components/school/SchoolMatchCard";
-import { sampleMatchedSchools } from "@/data/schools";
+
 import { rankSchools, type MatchAnswers } from "@/lib/matching";
 import { CalendarDays, GitCompare, School, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getSchoolListings, type SchoolListing } from "@/lib/schoolListings";
+import type { MatchableSchool } from "@/lib/matching"
 
 type ResultsScreenProps = {
   answers: MatchAnswers;
+  onRematch: () => void;
 };
 
-export default function ResultsScreen({ answers }: ResultsScreenProps) {
-  const rankedSchools = rankSchools(sampleMatchedSchools, answers);
+export default function ResultsScreen({ answers ,onRematch  }: ResultsScreenProps) {
 
+    const [schools, setSchools] = useState<MatchableSchool[]>([]);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  async function loadSchools() {
+    const data = await getSchoolListings();
+
+    const matchableSchools: MatchableSchool[] = data.map((school: SchoolListing) => ({
+      id: school.id,
+      name: school.name,
+      emirate: school.emirate,
+      curricula: school.curricula,
+      feeRange: school.feeRange,
+      grades: school.grades,
+      priorities: school.priorities,
+      reasons: [],
+      location: {
+        address: school.address || [school.area, school.emirate].filter(Boolean).join(", "),
+        lat: 0,
+        lng: 0,
+      },
+      heroImageUrl: null,
+      heroVideoUrl: null,
+      heroVideoPosterUrl: null,
+    }));
+
+    setSchools(matchableSchools);
+    setLoading(false);
+  }
+
+  loadSchools();
+}, []);
+ const rankedSchools = rankSchools(schools, answers);
+if (loading) {
+  return (
+    <div className="min-h-[calc(100vh-80px)] bg-[#F8F1E7] px-4 py-10">
+      Loading matched schools...
+    </div>
+  );
+}
   const bestMatch = rankedSchools[0];
   const otherMatches = rankedSchools.slice(1);
 
@@ -39,6 +82,13 @@ export default function ResultsScreen({ answers }: ResultsScreenProps) {
                 <p className="mt-3 text-lg text-[#8A651F]" dir="rtl">
                   تم تجهيز أفضل مدرسة مناسبة لطفلك
                 </p>
+                <button
+  type="button"
+  onClick={onRematch}
+  className="mt-5 rounded-full border border-[#071B33]/20 bg-white px-5 py-3 text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+>
+  Start a new match
+</button>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">

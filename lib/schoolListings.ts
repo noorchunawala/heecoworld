@@ -154,7 +154,7 @@ type ListingRow = {
   website: string | null;
   short_description: string | null;
   source_url: string | null;
-  school_profiles: SchoolProfileRow[];
+  school_profiles: SchoolProfileRow[] | SchoolProfileRow | null;
 };
 
 type SchoolDetailRow = ListingRow & {
@@ -257,7 +257,9 @@ type SchoolDetailRow = ListingRow & {
 };
 
 function mapBaseSchoolRow(school: ListingRow): SchoolListing {
-  const profile = school.school_profiles?.[0];
+  const profile = Array.isArray(school.school_profiles)
+  ? school.school_profiles[0]
+  : school.school_profiles;
 
   return {
     id: school.id,

@@ -116,48 +116,77 @@ export default function HomePage() {
       
 
       
+<section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+  <div className="relative overflow-hidden rounded-[2rem] bg-[#071B33] p-8 text-white shadow-xl shadow-[#071B33]/20 sm:p-10">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(214,180,106,0.20),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.14),transparent_36%)]" />
 
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] bg-[#071B33] p-8 text-white shadow-xl shadow-[#071B33]/20">
-          <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
-            <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-[#F5E6C8]">
-                <Factory className="h-4 w-4 text-[#D6B46A]" />
-                Educational experiences
-              </div>
-
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                Industrial visits are now a separate HeecoWorld vertical.
-              </h2>
-
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-                Alongside school discovery, HeecoWorld also supports schools
-                with structured real-world learning experiences and industrial
-                visits across the UAE.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-              <Button
-                asChild
-                className="rounded-full bg-[#D6B46A] text-[#071B33] hover:bg-[#E3C982]"
-              >
-                <Link href="/industrial-visits">
-                  Explore Industrial Visits
-                </Link>
-              </Button>
-
-              <Button
-                asChild
-                variant="outline"
-                className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20"
-              >
-                <Link href="/schools">Back to Schools</Link>
-              </Button>
-            </div>
-          </div>
+    <div className="relative grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:items-center">
+      <div>
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-[#F5E6C8] backdrop-blur">
+          <Factory className="h-4 w-4 text-[#D6B46A]" />
+          Educational Experiences
         </div>
-      </section>
+
+        <h2 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">
+          Extend learning beyond the classroom.
+        </h2>
+
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+          HeecoWorld helps schools plan meaningful educational experiences —
+          from industrial visits and STEM workshops to university tours,
+          innovation centres and real-world learning opportunities across the UAE.
+        </p>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {[
+            "Industrial visits",
+            "STEM workshops",
+            "University tours",
+          ].map((item) => (
+            <div
+              key={item}
+              className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-4 backdrop-blur"
+            >
+              <p className="text-sm font-semibold text-white">{item}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.08] p-5 backdrop-blur">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#D6B46A]">
+          For schools
+        </p>
+
+        <h3 className="mt-3 text-2xl font-semibold text-white">
+          Bring real-world learning into your school calendar.
+        </h3>
+
+        <p className="mt-3 text-sm leading-6 text-slate-300">
+          Use HeecoWorld to explore curated learning experiences that support
+          career awareness, innovation, sustainability and hands-on education.
+        </p>
+
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Button
+            asChild
+            className="rounded-full bg-[#D6B46A] text-[#071B33] hover:bg-[#E3C982]"
+          >
+            <Link href="/industrial-visits">Explore Experiences</Link>
+          </Button>
+
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20"
+          >
+            <Link href="/for-schools">Partner with HeecoWorld</Link>
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       <section className="border-t border-[#E8DCC6] bg-[#071B33] px-4 py-12 text-white sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 sm:flex-row sm:items-center">

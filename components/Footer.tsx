@@ -13,27 +13,27 @@ import {
 
 const productLinks = [
   { label: "Home", href: "/" },
-  { label: "Schools Directory", href: "/schools" },
-  { label: "Heeco Match", href: "/heeco-match" },
+  { label: "Schools", href: "/schools" },
+  { label: "Heeco Match™", href: "/heeco-match" },
   { label: "Compare Schools", href: "/compare" },
-  { label: "Shortlist", href: "/shortlist" },
   { label: "Book School Tour", href: "/school-tour" },
+  { label: "List Your School", href: "/for-schools" },
 ];
 
 const verticalLinks = [
-  { label: "Industrial Visits", href: "/industrial-visits" },
-  { label: "For Schools", href: "/schools" },
-  { label: "School Profiles", href: "/schools" },
+  { label: "Educational Experiences", href: "/industrial-visits" },
+  { label: "Partner with HeecoWorld", href: "/for-schools" },
+  { label: "School Directory", href: "/schools" },
 ];
 
 const featureLinks = [
   {
-    label: "Search schools",
+    label: "Discover schools",
     href: "/schools",
     icon: Search,
   },
   {
-    label: "Find best match",
+    label: "Heeco Match™",
     href: "/heeco-match",
     icon: Sparkles,
   },
@@ -43,17 +43,12 @@ const featureLinks = [
     icon: GitCompare,
   },
   {
-    label: "Save shortlist",
-    href: "/shortlist",
-    icon: Heart,
-  },
-  {
-    label: "Book tours",
+    label: "Request school tours",
     href: "/school-tour",
     icon: CalendarDays,
   },
   {
-    label: "Industrial visits",
+    label: "Educational experiences",
     href: "/industrial-visits",
     icon: Factory,
   },
@@ -75,19 +70,19 @@ export default function Footer() {
                   HeecoWorld
                 </h2>
                 <p className="text-sm text-slate-300">
-                  UAE Education Marketplace
+                  Helping UAE Families Choose Better Schools
                 </p>
               </div>
             </Link>
 
             <p className="mt-5 max-w-sm text-sm leading-7 text-slate-300">
-              Find, compare, shortlist and book school tours across the UAE.
-              HeecoWorld helps parents make clearer school decisions from one
-              simple platform.
+              Helping UAE families discover, compare and confidently choose the right school.
+
+HeecoWorld combines intelligent school discovery, Heeco Match™, school comparisons, tour requests and educational experiences into one trusted platform.
             </p>
 
             <p className="mt-4 text-sm leading-7 text-[#F5E6C8]" dir="rtl">
-              منصة تعليمية لاكتشاف ومقارنة المدارس في دولة الإمارات
+              اكتشف وقارن واختر المدرسة المناسبة لطفلك بكل ثقة
             </p>
           </div>
 
@@ -111,7 +106,7 @@ export default function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#D6B46A]">
-              Verticals
+              Solutions
             </h3>
 
             <div className="mt-5 grid gap-3">
@@ -162,15 +157,18 @@ export default function Footer() {
 
             <span className="inline-flex items-center gap-2">
               <School className="h-4 w-4 text-[#D6B46A]" />
-              For parents, schools and education partners
+              Built for UAE families, schools and education partners
             </span>
 
             <span className="hidden text-slate-600 sm:inline">•</span>
 
-            <span className="inline-flex items-center gap-2">
-              <Mail className="h-4 w-4 text-[#D6B46A]" />
-              info@heecoworld.com
-            </span>
+           <a
+  href="mailto:info@heecoworld.com"
+  className="inline-flex items-center gap-2 hover:text-[#D6B46A]"
+>
+  <Mail className="h-4 w-4 text-[#D6B46A]" />
+  info@heecoworld.com
+</a>
           </div>
 
           <p className="text-sm text-slate-400">

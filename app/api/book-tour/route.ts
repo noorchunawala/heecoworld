@@ -39,7 +39,7 @@ function pickSchoolEmail(
   return admissionsEmail?.value || emailContacts[0]?.value || null;
 }
 
-async function sendTourEmails(requestId: string, payload: TourPayload) {
+async function sendTourEmails(requestId: string, payload: TourPayload ,referenceCode: string) {
   try {
     const { data: schools, error: schoolsError } = await supabase
       .from("listings")
@@ -87,7 +87,7 @@ async function sendTourEmails(requestId: string, payload: TourPayload) {
           to: school.email!,
           cc: "info@heecoworld.com",
           replyTo: payload.email || "info@heecoworld.com",
-          subject: `New Parent Tour Request | ${school.schoolName} | HeecoWorld`,
+          subject: `New Parent Tour Request | ${school.schoolName} | ${referenceCode} | HeecoWorld`,
           html: buildSchoolTourEmail({
             schoolName: school.schoolName,
             parentName: payload.parent_name,
@@ -108,7 +108,7 @@ async function sendTourEmails(requestId: string, payload: TourPayload) {
           from: "HeecoWorld <info@heecoworld.com>",
           to: payload.email,
           replyTo: "info@heecoworld.com",
-          subject: "Your School Tour Request has been submitted | HeecoWorld",
+          subject: `Your School Tour Request | ${referenceCode} | HeecoWorld`,
           html: buildParentConfirmationEmail({
             parentName: payload.parent_name,
             schools: (schools || []).map((school) => school.name),
@@ -168,10 +168,22 @@ export async function POST(request: Request) {
         { success: false, message: insertError.message },
         { status: 500 }
       );
+
     }
+    const referenceCode = `HW-TOUR-${insertedRequest.id
+  .replace(/-/g, "")
+  .substring(0, 8)
+  .toUpperCase()}`;
+
+await supabase
+  .from("tour_requests")
+  .update({
+    reference_code: referenceCode,
+  })
+  .eq("id", insertedRequest.id);
 
     after(async () => {
-      await sendTourEmails(insertedRequest.id, payload);
+      await sendTourEmails(insertedRequest.id, payload, referenceCode);
     });
 
     return NextResponse.json({

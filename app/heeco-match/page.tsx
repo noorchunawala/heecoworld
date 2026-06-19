@@ -4,7 +4,13 @@
 import { useEffect, useState } from "react";
 import WelcomeScreen from "@/components/school-match/WelcomeScreen";
 import QuestionScreen from "@/components/school-match/QuestionScreen";
-import { heecoMatchQuestions } from "./questions";
+import {
+  americanGradeOptions,
+  britishGradeOptions,
+  cbseGradeOptions,
+  heecoMatchQuestions,
+  ibGradeOptions,
+} from "./questions";
 import LoadingScreen from "@/components/school-match/LoadingScreen";
 import ResultsScreen from "@/components/school-match/ResultsScreen";
 
@@ -12,7 +18,39 @@ export default function HeecoMatchPage() {
     const [screen, setScreen] = useState<"welcome" | "questions" | "loading" | "results">("welcome");
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<Record<string, unknown>>({});
-    const currentQuestion = heecoMatchQuestions[currentQuestionIndex];
+    function getCurrentQuestion() {
+  const baseQuestion = heecoMatchQuestions[currentQuestionIndex];
+
+  if (baseQuestion?.id !== "grade") {
+    return baseQuestion;
+  }
+
+  const selectedCurriculum = answers.curriculum;
+
+  if (selectedCurriculum === "British") {
+    return { ...baseQuestion, options: britishGradeOptions };
+  }
+
+  if (selectedCurriculum === "CBSE") {
+    return { ...baseQuestion, options: cbseGradeOptions };
+  }
+
+  if (selectedCurriculum === "American") {
+    return { ...baseQuestion, options: americanGradeOptions };
+  }
+
+  if (selectedCurriculum === "IB") {
+    return { ...baseQuestion, options: ibGradeOptions };
+  }
+
+  return baseQuestion;
+}
+function resetMatch() {
+  setAnswers({});
+  setCurrentQuestionIndex(0);
+  setScreen("welcome");
+}
+    const currentQuestion = getCurrentQuestion();
     useEffect(() => {
   if (screen !== "loading") return;
 
@@ -66,7 +104,7 @@ if (screen === "results") {
   return (
     <main className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white px-4 py-10 ">
       
-       <ResultsScreen answers={answers} />
+       <ResultsScreen answers={answers} onRematch={resetMatch}/>
       
     </main>
   );

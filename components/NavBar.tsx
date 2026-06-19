@@ -9,10 +9,10 @@ import Container from "./Container";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Schools", href: "/schools" },
-  { label: "School Match", href: "/heeco-match" },
+  { label: "Heeco Match", href: "/heeco-match" },
   { label: "Compare", href: "/compare" },
   { label: "Shortlist", href: "/shortlist" },
-  { label: "Industrial Visits", href: "/industrial-visits" },
+  { label: "Experiences", href: "/industrial-visits" },
 ];
 
 export default function Navbar() {
@@ -73,10 +73,10 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/school-tour"
+              href="/for-schools"
               className="rounded-full bg-[#071B33] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0B2A4D]"
             >
-              Book a School Tour
+              List Your School
             </Link>
           </div>
 
