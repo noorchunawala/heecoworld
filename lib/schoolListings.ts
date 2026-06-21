@@ -158,39 +158,66 @@ type ListingRow = {
 };
 
 type SchoolDetailRow = ListingRow & {
-  school_profile_details: {
-    hero_video_url: string | null;
-    hero_video_poster_url: string | null;
-    hero_image_url: string | null;
-
-    description: string | null;
-
-    school_type: string | null;
-    school_phase: string | null;
-    founded_year: string | null;
-    authority: string | null;
-    inspection_rating: string | null;
-    wellbeing_rating: string | null;
-    inclusion_rating: string | null;
-    last_inspection_year: string | null;
-    opening_year: string | null;
-    teacher_turnover: string | null;
-    principal_name: string | null;
-    owner_name: string | null;
-    community: string | null;
-    main_teacher_nationality: string | null;
-
-    application_fee: string | null;
-    registration_fee: string | null;
-    transport_fee_note: string | null;
-    admission_notes: string | null;
-
-    academics_highlights: string[] | null;
-    admissions_requirements: string[] | null;
-    admissions_process: string[] | null;
-    visit_checklist: string[] | null;
-    reasons: string[] | null;
-  }[];
+ school_profile_details:
+  | {
+      hero_video_url: string | null;
+      hero_video_poster_url: string | null;
+      hero_image_url: string | null;
+      description: string | null;
+      school_type: string | null;
+      school_phase: string | null;
+      founded_year: string | null;
+      authority: string | null;
+      inspection_rating: string | null;
+      wellbeing_rating: string | null;
+      inclusion_rating: string | null;
+      last_inspection_year: string | null;
+      opening_year: string | null;
+      teacher_turnover: string | null;
+      principal_name: string | null;
+      owner_name: string | null;
+      community: string | null;
+      main_teacher_nationality: string | null;
+      application_fee: string | null;
+      registration_fee: string | null;
+      transport_fee_note: string | null;
+      admission_notes: string | null;
+      academics_highlights: string[] | null;
+      admissions_requirements: string[] | null;
+      admissions_process: string[] | null;
+      visit_checklist: string[] | null;
+      reasons: string[] | null;
+    }
+  | {
+      hero_video_url: string | null;
+      hero_video_poster_url: string | null;
+      hero_image_url: string | null;
+      description: string | null;
+      school_type: string | null;
+      school_phase: string | null;
+      founded_year: string | null;
+      authority: string | null;
+      inspection_rating: string | null;
+      wellbeing_rating: string | null;
+      inclusion_rating: string | null;
+      last_inspection_year: string | null;
+      opening_year: string | null;
+      teacher_turnover: string | null;
+      principal_name: string | null;
+      owner_name: string | null;
+      community: string | null;
+      main_teacher_nationality: string | null;
+      application_fee: string | null;
+      registration_fee: string | null;
+      transport_fee_note: string | null;
+      admission_notes: string | null;
+      academics_highlights: string[] | null;
+      admissions_requirements: string[] | null;
+      admissions_process: string[] | null;
+      visit_checklist: string[] | null;
+      reasons: string[] | null;
+    }[]
+  | null;
 
   school_fees: {
     id: string;
@@ -469,7 +496,9 @@ export async function getSchoolListingBySlug(
 
   const school = data as unknown as SchoolDetailRow;
   const baseSchool = mapBaseSchoolRow(school);
-  const details = school.school_profile_details?.[0];
+  const details = Array.isArray(school.school_profile_details)
+  ? school.school_profile_details[0]
+  : school.school_profile_details;
 
   const detailedFacilities: SchoolFacility[] =
     school.school_facilities?.length > 0

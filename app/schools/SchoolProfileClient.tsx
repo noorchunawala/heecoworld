@@ -148,10 +148,8 @@ const profileTabs: { key: TabKey; label: string }[] = [
   { key: "fees", label: "Fees & Availability" },
   { key: "academics", label: "Academics" },
   { key: "facilities", label: "Facilities" },
-  { key: "admissions", label: "Admissions" },
   { key: "inspection", label: "Inspection" },
   { key: "parentGuide", label: "Parent Guide" },
-  { key: "visitChecklist", label: "Visit Checklist" },
   { key: "qa", label: "Q&A" },
   { key: "contact", label: "Contact" },
 ];
@@ -490,7 +488,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Fees & Availability"
                 title="Annual fees and seat availability"
-                description="Fee and availability information should be updated by admin. Parents can use this section to compare cost by grade, seat status and possible extra charges."
+                description=""
               >
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                   <InfoCard label="Fee range" value={feeRangeText} />
@@ -510,7 +508,7 @@ export default function SchoolProfileClient({
 
                 <DataBlock
                   title="Annual fees by grade"
-                  description="Admin can add one row for every grade or year group."
+                  description=""
                 >
                   {sortedFees.length > 0 ? (
                     <div className="overflow-x-auto">
@@ -551,7 +549,7 @@ export default function SchoolProfileClient({
 
                 <DataBlock
                   title="Availability by grade"
-                  description="Admin can update seats or waiting-list status for each grade."
+                  description=""
                 >
                   {sortedAvailability.length > 0 ? (
                     <div className="overflow-x-auto">
@@ -590,7 +588,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Academics"
                 title="Curriculum and learning approach"
-                description="This section should be maintained by admin with academic strengths, curriculum notes, language support and learning support details."
+                description=""
               >
                 <div className="grid gap-4 sm:grid-cols-2">
                   <InfoCard
@@ -620,7 +618,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Facilities"
                 title="Campus facilities"
-                description="Facilities should be admin-editable so each school can update labs, sports, library, clinic, transport and other campus details."
+                description=""
               >
                 {sortedFacilities.length > 0 ? (
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -668,7 +666,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Admissions"
                 title="Admissions process and requirements"
-                description="Admin can update admission status, required documents, assessment details, application fee and seat process."
+                description=""
               >
                 <div className="grid gap-4 sm:grid-cols-2">
                   <InfoCard label="Admission status" value={school.status} />
@@ -701,7 +699,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Inspection"
                 title="Year-wise inspection reports"
-                description="Parents can review rating history and download inspection reports uploaded by admin for each academic year."
+                description=""
               >
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                   <InfoCard
@@ -724,7 +722,7 @@ export default function SchoolProfileClient({
 
                 <DataBlock
                   title="Inspection rating history"
-                  description="Admin can upload one report per year. Parents can download any available report."
+                  description=""
                 >
                   {sortedReports.length > 0 ? (
                     <div className="overflow-x-auto">
@@ -797,7 +795,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Parent Guide"
                 title="Decision guide for parents"
-                description="This section turns school data into practical decision points for parents."
+                description=""
               >
                 {sortedParentGuides.length > 0 ? (
                   <div className="grid gap-4">
@@ -819,7 +817,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Visit Checklist"
                 title="Questions to ask during your school visit"
-                description="This is HeecoWorld's product advantage. Admin can maintain a school-specific visit checklist."
+                description=""
               >
                 <ListBlock
                   title="School visit checklist"
@@ -833,7 +831,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Q&A"
                 title="Common parent questions"
-                description="Admin can add frequently asked questions for this school."
+                description=""
               >
                 {sortedQa.length > 0 ? (
                   <div className="space-y-4">
@@ -861,7 +859,7 @@ export default function SchoolProfileClient({
               <SectionCard
                 eyebrow="Contact"
                 title="Location and contact information"
-                description="Contact information should be updated from admin so parents always see the latest admissions details."
+                description=""
               >
                 <div className="grid gap-4 sm:grid-cols-2">
                   {contacts.length > 0 ? (
@@ -876,14 +874,28 @@ export default function SchoolProfileClient({
                   )}
                 </div>
 
-                <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200">
-                  <iframe
-                    title={`${school.name} location`}
-                    src={mapUrl}
-                    className="h-80 w-full"
-                    loading="lazy"
-                  />
-                </div>
+              <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200">
+  <iframe
+    title={`${school.name} location`}
+    src={mapUrl}
+    className="h-80 w-full"
+    loading="lazy"
+  />
+</div>
+
+<div className="mt-4">
+  <a
+    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      school.address ||
+        `${school.name}, ${school.area}, ${school.emirate}, UAE`
+    )}`}
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex rounded-full bg-[#071B33] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0B2A4D]"
+  >
+    Open in Google Maps
+  </a>
+</div>
               </SectionCard>
             )}
           </div>
