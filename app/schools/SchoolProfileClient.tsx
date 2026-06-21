@@ -174,14 +174,14 @@ export default function SchoolProfileClient({
 
     sessionStorage.setItem(sessionKey, "true");
 
-    const { error } = await supabase.from("school_page_views").insert({
-      listing_id: school.id,
-      school_name: school.name,
-      school_slug: school.slug,
-      page_path: window.location.pathname,
-      referrer: document.referrer || null,
-      user_agent: navigator.userAgent || null,
-    });
+  const { error } = await supabase.from("school_page_views").insert({
+  listing_id: school.id,
+  school_name: school.name || "Unknown school",
+  school_slug: school.slug || window.location.pathname.split("/").pop() || "unknown",
+  page_path: window.location.pathname,
+  referrer: document.referrer || null,
+  user_agent: navigator.userAgent || null,
+});
 
     if (error) {
       console.error("Error tracking school page view:", error);

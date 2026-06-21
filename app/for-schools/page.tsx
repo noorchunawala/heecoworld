@@ -28,6 +28,7 @@ export default function ForSchoolsPage() {
     if (!form.schoolName.trim()) return alert("Please enter school name.");
     if (!form.contactPerson.trim()) return alert("Please enter contact person.");
     if (!form.email.trim()) return alert("Please enter email address.");
+    if (!form.phone.trim()) return alert("Please enter phone number.");
 
     setSubmitting(true);
 

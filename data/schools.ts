@@ -5,6 +5,7 @@ export const sampleMatchedSchools: MatchableSchool[] = [
     heroVideoUrl:"/video/heecoworld-school-hero-sample.mp4",
     id: "gems-modern-academy",
     name: "GEMS Modern Academy",
+    slug:"",
     emirate: "dubai",
     curricula: ["cbse", "ib"],
     feeRange: {
@@ -28,6 +29,7 @@ reasons: [
     id: "delhi-private-school-sharjah",
     name: "Delhi Private School Sharjah",
     emirate: "sharjah",
+    slug:"",
     curricula: ["cbse"],
     feeRange: {
       min: 10000,
@@ -50,6 +52,7 @@ reasons: [
     id: "sample-british-school-dubai",
     name: "Sample British School Dubai",
     emirate: "dubai",
+    slug:"",
     curricula: ["british"],
     feeRange: {
       min: 25000,

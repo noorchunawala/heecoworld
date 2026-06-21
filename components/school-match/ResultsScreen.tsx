@@ -24,6 +24,7 @@ useEffect(() => {
       id: school.id,
       name: school.name,
       emirate: school.emirate,
+      slug:school.slug,
       curricula: school.curricula,
       feeRange: school.feeRange,
       grades: school.grades,

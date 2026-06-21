@@ -38,11 +38,11 @@ export default function Navbar() {
 
             <div>
               <h1 className="text-lg font-bold tracking-tight text-[#071B33]">
-                HeecoWorld
+                Heeco
               </h1>
 
               <p className="text-xs text-slate-500">
-                UAE Education Marketplace
+               Hub of Experiential Education
               </p>
             </div>
           </Link>
@@ -107,13 +107,12 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              <Link
-                href="/school-tour"
-                onClick={() => setOpen(false)}
-                className="mt-3 block rounded-full bg-[#071B33] px-5 py-3 text-center text-sm font-semibold text-white"
-              >
-                Book a School Tour
-              </Link>
+             <Link
+              href="/for-schools"
+              className="rounded-full bg-[#071B33] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0B2A4D]"
+            >
+              List Your School
+            </Link>
             </div>
           </div>
         )}

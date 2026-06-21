@@ -54,6 +54,8 @@ export default function SchoolTourPage() {
 tomorrow.setDate(tomorrow.getDate() + 1);
 const minVisitDate = tomorrow.toISOString().split("T")[0];
 const [submitted, setSubmitted] = useState(false);
+const [showSchoolPicker, setShowSchoolPicker] = useState(false);
+const [schoolSearch, setSchoolSearch] = useState("");
 
   useEffect(() => {
     async function loadSchools() {
@@ -92,6 +94,30 @@ const [submitted, setSubmitted] = useState(false);
       .filter((school): school is SchoolListing => Boolean(school));
   }, [schools, selectedSchoolIds]);
 
+const filteredAvailableSchools = useMemo(() => {
+  const query = schoolSearch.trim().toLowerCase();
+
+  return schools
+    .filter((school) => !selectedSchoolIds.includes(school.id))
+    .filter((school) => {
+      if (!query) return true;
+
+      return [
+        school.name,
+        school.emirate,
+        school.area,
+        school.curricula?.join(" "),
+        school.grades?.join(" "),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(query);
+    })
+    .slice(0, 6);
+}, [schools, selectedSchoolIds, schoolSearch]);
+
+
   const toggleSchool = (schoolId: string) => {
     setSelectedSchoolIds((current) => {
       if (current.includes(schoolId)) {
@@ -129,6 +155,12 @@ if (!formData.parentName.trim()) {
 
 if (!formData.mobile.trim()) {
   alert("Please enter mobile number.");
+  return;
+}
+const mobile = formData.mobile.replace(/\s/g, "").trim();
+
+if (!/^(\+9715\d{8}|05\d{8})$/.test(mobile)) {
+  alert("Please enter a valid UAE mobile number, e.g. +971501234567 or 0501234567.");
   return;
 }
 
@@ -281,16 +313,21 @@ setFormData(initialFormData);
       </span>.
     </p>
 
-    <button
-      type="button"
-      onClick={() => {
-        setSubmitted(false);
-        setSelectedSchoolIds([]);
-      }}
-      className="mt-6 rounded-full bg-[#071B33] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0B2A4D]"
-    >
-      Submit another request
-    </button>
+    <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+  <Link
+    href="/schools"
+    className="rounded-full bg-[#071B33] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0B2A4D]"
+  >
+    Explore More Schools
+  </Link>
+
+  <Link
+    href="/"
+    className="rounded-full border border-[#071B33]/15 px-6 py-3 text-sm font-semibold text-[#071B33] hover:bg-white"
+  >
+    Back to Home
+  </Link>
+</div>
   </div>
 ) : (
   <form className="grid gap-5" onSubmit={handleSubmit}>
@@ -305,86 +342,95 @@ setFormData(initialFormData);
                     </span>
                   </div>
 
-                  {isPrefilledFromUrl ? (
-                    <div className="rounded-2xl border border-[#D6B46A]/40 bg-[#FFFBF3] p-4">
-                      <div className="flex flex-wrap gap-3">
-                        {selectedSchools.map((school) => (
-                          <div
-                            key={school.id}
-                            className="inline-flex items-center gap-2 rounded-full bg-[#071B33] px-4 py-2 text-sm font-semibold text-white"
-                          >
-                            <span>✓ {school.name}</span>
+                 <div className="rounded-2xl border border-[#D6B46A]/40 bg-[#FFFBF3] p-4">
+  <div className="flex flex-wrap gap-3">
+    {selectedSchools.map((school) => (
+      <div
+        key={school.id}
+        className="inline-flex items-center gap-2 rounded-full bg-[#071B33] px-4 py-2 text-sm font-semibold text-white"
+      >
+        <span>✓ {school.name}</span>
 
-                            {selectedSchools.length > 1 && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setSelectedSchoolIds((current) =>
-                                    current.filter((id) => id !== school.id)
-                                  )
-                                }
-                                className="rounded-full bg-white/10 p-1 transition hover:bg-white/20"
-                                aria-label={`Remove ${school.name}`}
-                              >
-                                <X className="h-3.5 w-3.5" />
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+        <button
+          type="button"
+          onClick={() =>
+            setSelectedSchoolIds((current) =>
+              current.filter((id) => id !== school.id)
+            )
+          }
+          className="rounded-full bg-white/10 p-1 transition hover:bg-white/20"
+          aria-label={`Remove ${school.name}`}
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    ))}
+  </div>
 
-                      <p className="mt-4 text-sm leading-6 text-slate-600">
-                        {selectedSchools.length > 1
-                          ? "You can remove a school from this tour request before submitting."
-                          : "This school was selected for your tour request. You can go back if you want to choose another school."}
-                      </p>
+  {selectedSchools.length < 3 && (
+    <div className="mt-4">
+      {!showSchoolPicker ? (
+        <button
+          type="button"
+          onClick={() => setShowSchoolPicker(true)}
+          className="rounded-full border border-[#071B33]/15 bg-white px-4 py-2 text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+        >
+          + Add another school
+        </button>
+      ) : (
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <input
+            value={schoolSearch}
+            onChange={(event) => setSchoolSearch(event.target.value)}
+            placeholder="Search school name, emirate, curriculum or grades..."
+            className="w-full rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-[#D6B46A] focus:bg-white"
+          />
 
-                      {selectedSchools.length === 1 && (
-                        <button
-                          type="button"
-                          onClick={() => window.history.back()}
-                          className="mt-4 rounded-full border border-[#071B33]/15 px-4 py-2 text-sm font-semibold text-[#071B33] hover:bg-white"
-                        >
-                          Cancel and go back
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex flex-wrap gap-3">
-                      {schools.map((school) => {
-                        const isSelected = selectedSchoolIds.includes(
-                          school.id
-                        );
-                        const isDisabled =
-                          !isSelected && selectedSchoolIds.length >= 3;
+          <div className="mt-3 grid gap-2">
+            {filteredAvailableSchools.map((school) => (
+              <button
+                key={school.id}
+                type="button"
+                onClick={() => {
+                  setSelectedSchoolIds((current) => [...current, school.id]);
+                  setSchoolSearch("");
+                  setShowSchoolPicker(false);
+                }}
+                className="rounded-xl px-4 py-3 text-left text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+              >
+                {school.name}
+                <span className="ml-2 text-xs font-medium text-slate-500">
+                  {[school.area, school.emirate].filter(Boolean).join(", ")}
+                </span>
+              </button>
+            ))}
 
-                        return (
-                          <button
-                            key={school.id}
-                            type="button"
-                            onClick={() => toggleSchool(school.id)}
-                            disabled={isDisabled}
-                            className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                              isSelected
-                                ? "border-[#071B33] bg-[#071B33] text-white"
-                                : isDisabled
-                                ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
-                                : "border-slate-200 bg-slate-50 text-[#071B33] hover:border-[#D6B46A] hover:bg-[#F8F1E7]"
-                            }`}
-                          >
-                            {isSelected ? "✓ " : ""}
-                            {school.name}
-                          </button>
-                        );
-                      })}
+            {filteredAvailableSchools.length === 0 && (
+              <p className="px-2 py-2 text-sm text-slate-500">
+                No schools found.
+              </p>
+            )}
+          </div>
 
-                      {schools.length === 0 && (
-                        <p className="text-sm text-slate-500">
-                          No schools added yet.
-                        </p>
-                      )}
-                    </div>
-                  )}
+          <button
+            type="button"
+            onClick={() => {
+              setShowSchoolPicker(false);
+              setSchoolSearch("");
+            }}
+            className="mt-3 text-sm font-semibold text-slate-500 hover:text-[#071B33]"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+    </div>
+  )}
+
+  <p className="mt-4 text-sm leading-6 text-slate-600">
+    You can request tours for up to 3 schools. Final confirmation depends on each school’s availability.
+  </p>
+</div>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">

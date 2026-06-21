@@ -66,22 +66,24 @@ export default function ComparePage() {
   const filteredSchools = useMemo(() => {
     const query = searchText.trim().toLowerCase();
 
-    if (!query) return schools;
+    if (!query) return [];
 
-    return schools.filter((school) => {
-      const searchableText = [
-        school.name,
-        school.emirate,
-        school.area,
-        school.curricula?.join(" "),
-        school.grades?.join(" "),
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+    return schools
+      .filter((school) => {
+        const searchableText = [
+          school.name,
+          school.emirate,
+          school.area,
+          school.curricula?.join(" "),
+          school.grades?.join(" "),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
 
-      return searchableText.includes(query);
-    });
+        return searchableText.includes(query);
+      })
+      .slice(0, 8);
   }, [searchText, schools]);
 
   const toggleSchool = (schoolId: string) => {
@@ -96,6 +98,8 @@ export default function ComparePage() {
 
       return [...current, schoolId];
     });
+
+    setSearchText("");
   };
 
   const removeSchool = (schoolId: string) => {
@@ -104,9 +108,11 @@ export default function ComparePage() {
 
   const clearCompare = () => {
     setSelectedIds([]);
+    setSearchText("");
   };
 
   const canAddMore = selectedIds.length < MAX_COMPARE;
+  const hasSearch = searchText.trim().length > 0;
 
   if (loading) {
     return (
@@ -201,49 +207,107 @@ export default function ComparePage() {
             </div>
 
             <div className="mt-6">
+              {selectedSchools.length > 0 && (
+                <div className="mb-4 flex flex-wrap gap-3">
+                  {selectedSchools.map((school) => (
+                    <div
+                      key={school.id}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#071B33] px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      <span>✓ {school.name}</span>
+
+                      <button
+                        type="button"
+                        onClick={() => removeSchool(school.id)}
+                        className="rounded-full bg-white/10 p-1 transition hover:bg-white/20"
+                        aria-label={`Remove ${school.name}`}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="relative">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
                 <input
                   value={searchText}
                   onChange={(event) => setSearchText(event.target.value)}
-                  placeholder="Search school name, emirate, curriculum or grades..."
-                  className="w-full rounded-full border border-slate-200 bg-[#FAF7F0] py-3 pl-11 pr-4 text-sm font-medium text-[#071B33] outline-none transition placeholder:text-slate-400 focus:border-[#D6B46A] focus:bg-white"
+                  disabled={!canAddMore}
+                  placeholder={
+                    canAddMore
+                      ? "Search school name, emirate, curriculum or grades..."
+                      : "Maximum 3 schools selected"
+                  }
+                  className="w-full rounded-full border border-slate-200 bg-[#FAF7F0] py-3 pl-11 pr-4 text-sm font-medium text-[#071B33] outline-none transition placeholder:text-slate-400 focus:border-[#D6B46A] focus:bg-white disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                 />
-              </div>
 
-              <div className="mt-5 flex flex-wrap gap-3">
-                {filteredSchools.map((school) => {
-                  const isSelected = selectedIds.includes(school.id);
-                  const isDisabled =
-                    !isSelected && selectedIds.length >= MAX_COMPARE;
+                {hasSearch && canAddMore && (
+                  <div className="absolute left-0 right-0 top-full z-20 mt-3 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-[#071B33]/15">
+                    {filteredSchools.length > 0 ? (
+                      <div className="max-h-80 overflow-y-auto p-2">
+                        {filteredSchools.map((school) => {
+                          const isSelected = selectedIds.includes(school.id);
 
-                  return (
-                    <button
-                      key={school.id}
-                      type="button"
-                      onClick={() => toggleSchool(school.id)}
-                      disabled={isDisabled}
-                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                        isSelected
-                          ? "border-[#071B33] bg-[#071B33] text-white"
-                          : isDisabled
-                          ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
-                          : "border-slate-200 bg-white text-[#071B33] hover:border-[#D6B46A] hover:bg-[#F8F1E7]"
-                      }`}
-                    >
-                      {isSelected ? "✓ " : ""}
-                      {school.name}
-                    </button>
-                  );
-                })}
+                          return (
+                            <button
+                              key={school.id}
+                              type="button"
+                              onClick={() => toggleSchool(school.id)}
+                              disabled={isSelected}
+                              className={`flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-3 text-left transition ${
+                                isSelected
+                                  ? "cursor-not-allowed bg-[#F8F1E7] text-slate-400"
+                                  : "hover:bg-[#F8F1E7]"
+                              }`}
+                            >
+                              <div>
+                                <p className="text-sm font-semibold text-[#071B33]">
+                                  {school.name}
+                                </p>
 
-                {filteredSchools.length === 0 && (
-                  <p className="text-sm text-slate-500">
-                    No schools found. Try another keyword.
-                  </p>
+                                <p className="mt-1 text-xs text-slate-500">
+                                  {[school.area, school.emirate]
+                                    .filter(Boolean)
+                                    .join(", ") || "Location not added"}
+                                </p>
+                              </div>
+
+                              <span className="shrink-0 rounded-full bg-[#FAF7F0] px-3 py-1 text-xs font-semibold text-[#B58A34]">
+                                {isSelected ? "Selected" : "Add"}
+                              </span>
+                            </button>
+                          );
+                        })}
+
+                        {schools.length > filteredSchools.length && (
+                          <p className="px-4 pb-3 pt-2 text-xs text-slate-500">
+                            Showing best matches. Type more to narrow down.
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-5 text-sm text-slate-500">
+                        No schools found. Try another keyword.
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
+
+              {!hasSearch && canAddMore && selectedSchools.length === 0 && (
+                <p className="mt-3 text-xs text-slate-500">
+                  Start typing to search and select schools for comparison.
+                </p>
+              )}
+
+              {!hasSearch && canAddMore && selectedSchools.length > 0 && (
+                <p className="mt-3 text-xs text-slate-500">
+                  Search again to add another school.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -320,7 +384,7 @@ export default function ComparePage() {
             </h2>
 
             <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
-              Start by selecting schools from the list above, or go back to the
+              Start by searching and selecting schools above, or go back to the
               schools page and open a school profile before adding it to compare.
             </p>
 

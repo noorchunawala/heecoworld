@@ -9,6 +9,7 @@ function normalize(value: unknown) {
 export type MatchableSchool = {
   id: string;
   name: string;
+  slug: string,
   emirate: string;
   curricula: string[];
   feeRange: {

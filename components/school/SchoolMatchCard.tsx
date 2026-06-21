@@ -14,6 +14,7 @@ type SchoolMatchCardProps = {
   school: {
     id: string;
     name: string;
+    slug:string;
     emirate: string;
     curricula: string[];
     feeRange: {
@@ -114,7 +115,7 @@ export default function SchoolMatchCard({ school }: SchoolMatchCardProps) {
   asChild
   className="rounded-full bg-[#071B33] text-white hover:bg-[#0B2A4D]"
 >
-  <Link href={`/schools/${school.id}`}>
+  <Link href={`/schools/${school.slug}`}>
     <Eye className="mr-2 h-4 w-4" />
     View School
   </Link>

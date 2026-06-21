@@ -28,7 +28,7 @@ const productSteps = [
     description:
       "Answer guided questions and get school recommendations based on your needs.",
     icon: Sparkles,
-    href: "/heeco-match",
+    href: "/HEECO-match",
   },
   {
     title: "Compare shortlisted schools",
@@ -68,7 +68,7 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#B58A34]">
-            How HeecoWorld works
+            How HEECO works
           </p>
 
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[#071B33] sm:text-4xl">
@@ -76,7 +76,7 @@ export default function HomePage() {
           </h2>
 
           <p className="mt-4 text-base leading-7 text-slate-600">
-            HeecoWorld brings school search, matching, comparison, shortlisting
+            HEECO brings school search, matching, comparison, shortlisting
             and tour requests into one simple product journey.
           </p>
         </div>
@@ -132,7 +132,7 @@ export default function HomePage() {
         </h2>
 
         <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-          HeecoWorld helps schools plan meaningful educational experiences —
+          HEECO helps schools plan meaningful educational experiences ,
           from industrial visits and STEM workshops to university tours,
           innovation centres and real-world learning opportunities across the UAE.
         </p>
@@ -163,7 +163,7 @@ export default function HomePage() {
         </h3>
 
         <p className="mt-3 text-sm leading-6 text-slate-300">
-          Use HeecoWorld to explore curated learning experiences that support
+          Use HEECO to explore curated learning experiences that support
           career awareness, innovation, sustainability and hands-on education.
         </p>
 
@@ -180,7 +180,7 @@ export default function HomePage() {
             variant="outline"
             className="rounded-full border-white/20 bg-white/10 text-white hover:bg-white/20"
           >
-            <Link href="/for-schools">Partner with HeecoWorld</Link>
+            <Link href="/for-schools">Partner with HEECO</Link>
           </Button>
         </div>
       </div>
@@ -192,7 +192,7 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 sm:flex-row sm:items-center">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#D6B46A]">
-              HeecoWorld
+              HEECO
             </p>
 
             <h2 className="mt-2 text-2xl font-semibold">
@@ -208,8 +208,8 @@ export default function HomePage() {
             asChild
             className="rounded-full bg-[#D6B46A] text-[#071B33] hover:bg-[#E3C982]"
           >
-            <Link href="/heeco-match">
-              Start Heeco Match
+            <Link href="/HEECO-match">
+              Start HEECO Match
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>

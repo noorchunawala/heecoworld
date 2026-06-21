@@ -67,10 +67,10 @@ export default function Footer() {
 
               <div>
                 <h2 className="text-xl font-bold tracking-tight">
-                  HeecoWorld
+                  HEECO
                 </h2>
                 <p className="text-sm text-slate-300">
-                  Helping UAE Families Choose Better Schools
+                  Hub of Experiential Education
                 </p>
               </div>
             </Link>
@@ -78,7 +78,7 @@ export default function Footer() {
             <p className="mt-5 max-w-sm text-sm leading-7 text-slate-300">
               Helping UAE families discover, compare and confidently choose the right school.
 
-HeecoWorld combines intelligent school discovery, Heeco Match™, school comparisons, tour requests and educational experiences into one trusted platform.
+HEECO combines intelligent school discovery, Heeco Match™, school comparisons, tour requests and educational experiences into one trusted platform.
             </p>
 
             <p className="mt-4 text-sm leading-7 text-[#F5E6C8]" dir="rtl">

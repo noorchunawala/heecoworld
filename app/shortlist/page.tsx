@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { sampleMatchedSchools } from "@/data/schools";
 import { Button } from "@/components/ui/button";
 import FavoriteButton from "@/components/favorites/FavoriteButton";
 import {
@@ -12,11 +11,17 @@ import {
   MapPin,
   School,
 } from "lucide-react";
+import {
+  getSchoolListings,
+  type SchoolListing,
+} from "@/lib/schoolListings";
 
 const FAVORITES_KEY = "heeco_favorite_school_ids";
 
 export default function ShortlistPage() {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const [schools, setSchools] = useState<SchoolListing[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const loadFavorites = () => {
     const stored = localStorage.getItem(FAVORITES_KEY);
@@ -25,7 +30,14 @@ export default function ShortlistPage() {
   };
 
   useEffect(() => {
-    loadFavorites();
+    async function loadData() {
+      const data = await getSchoolListings();
+      setSchools(data);
+      loadFavorites();
+      setLoading(false);
+    }
+
+    loadData();
 
     window.addEventListener("heeco-favorites-updated", loadFavorites);
 
@@ -35,10 +47,22 @@ export default function ShortlistPage() {
   }, []);
 
   const shortlistedSchools = useMemo(() => {
-    return sampleMatchedSchools.filter((school) =>
-      favoriteIds.includes(school.id)
+    return schools.filter((school) => favoriteIds.includes(school.id));
+  }, [schools, favoriteIds]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#F8F1E7]">
+        <section className="relative overflow-hidden bg-[#071B33] px-4 py-16 sm:px-6 lg:px-8">
+          <div className="relative mx-auto max-w-7xl">
+            <p className="text-sm font-medium text-slate-300">
+              Loading shortlist...
+            </p>
+          </div>
+        </section>
+      </main>
     );
-  }, [favoriteIds]);
+  }
 
   return (
     <main className="min-h-screen bg-[#F8F1E7]">
@@ -133,94 +157,111 @@ export default function ShortlistPage() {
           </div>
         ) : (
           <div className="mt-8 grid gap-5">
-            {shortlistedSchools.map((school) => (
-              <div
-                key={school.id}
-                className="rounded-[2rem] border border-white/80 bg-white p-5 shadow-xl shadow-[#071B33]/8 transition hover:-translate-y-0.5 hover:shadow-2xl sm:p-6"
-              >
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                  <div>
-                    <h2 className="text-2xl font-semibold tracking-tight text-[#071B33]">
-                      {school.name}
-                    </h2>
+            {shortlistedSchools.map((school) => {
+              const hasFeeRange =
+                Boolean(school.feeRange?.min) && Boolean(school.feeRange?.max);
 
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[#F8F1E7] px-3 py-1.5 text-xs font-semibold text-[#071B33]">
-                        <MapPin className="h-3.5 w-3.5 text-[#B58A34]" />
-                        {school.emirate}
-                      </span>
+              return (
+                <div
+                  key={school.id}
+                  className="rounded-[2rem] border border-white/80 bg-white p-5 shadow-xl shadow-[#071B33]/8 transition hover:-translate-y-0.5 hover:shadow-2xl sm:p-6"
+                >
+                  <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                    <div>
+                      <h2 className="text-2xl font-semibold tracking-tight text-[#071B33]">
+                        {school.name}
+                      </h2>
 
-                      {school.curricula.map((curriculum) => (
-                        <span
-                          key={curriculum}
-                          className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700"
-                        >
-                          {curriculum}
-                        </span>
-                      ))}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {school.emirate && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#F8F1E7] px-3 py-1.5 text-xs font-semibold text-[#071B33]">
+                            <MapPin className="h-3.5 w-3.5 text-[#B58A34]" />
+                            {school.emirate}
+                          </span>
+                        )}
 
-                      <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700">
-                        AED {school.feeRange.min.toLocaleString()} - AED{" "}
-                        {school.feeRange.max.toLocaleString()}
-                      </span>
+                        {school.curricula.map((curriculum) => (
+                          <span
+                            key={curriculum}
+                            className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700"
+                          >
+                            {curriculum}
+                          </span>
+                        ))}
+
+                        {hasFeeRange && (
+                          <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700">
+                            AED {school.feeRange.min.toLocaleString()} - AED{" "}
+                            {school.feeRange.max.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                        {school.priorities.slice(0, 4).map((priority) => (
+                          <div
+                            key={priority}
+                            className="rounded-2xl bg-[#FAF7F0] px-4 py-3 text-sm font-medium text-slate-700"
+                          >
+                            {priority}
+                          </div>
+                        ))}
+
+                        {school.priorities.length === 0 && (
+                          <div className="rounded-2xl bg-[#FAF7F0] px-4 py-3 text-sm font-medium text-slate-500">
+                            Priorities not added yet
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                      {school.priorities.slice(0, 4).map((priority) => (
-                        <div
-                          key={priority}
-                          className="rounded-2xl bg-[#FAF7F0] px-4 py-3 text-sm font-medium text-slate-700"
-                        >
-                          {priority}
-                        </div>
-                      ))}
+                    <div className="rounded-[1.5rem] bg-[#071B33] p-5 text-white lg:w-44 lg:shrink-0">
+                      <School className="h-5 w-5 text-[#D6B46A]" />
+                      <p className="mt-3 text-sm text-slate-300">From</p>
+                      <p className="mt-2 text-2xl font-semibold text-[#D6B46A]">
+                        {school.feeRange.min
+                          ? `AED ${school.feeRange.min.toLocaleString()}`
+                          : "Not added"}
+                      </p>
+                      <p className="mt-1 text-sm text-slate-300">per year</p>
                     </div>
                   </div>
 
-                  <div className="rounded-[1.5rem] bg-[#071B33] p-5 text-white lg:w-44 lg:shrink-0">
-                    <School className="h-5 w-5 text-[#D6B46A]" />
-                    <p className="mt-3 text-sm text-slate-300">From</p>
-                    <p className="mt-2 text-2xl font-semibold text-[#D6B46A]">
-                      AED {school.feeRange.min.toLocaleString()}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-300">per year</p>
+                  <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row">
+                    <Button
+                      asChild
+                      className="rounded-full bg-[#071B33] text-white hover:bg-[#0B2A4D]"
+                    >
+                      <Link href={`/schools/${school.slug}`}>View School</Link>
+                    </Button>
+
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="rounded-full border-[#071B33]/15 text-[#071B33] hover:bg-[#F8F1E7]"
+                    >
+                      <Link href={`/compare?schoolIds=${school.id}`}>
+                        <GitCompare className="mr-2 h-4 w-4" />
+                        Compare
+                      </Link>
+                    </Button>
+
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="rounded-full border-[#D6B46A]/60 text-[#071B33] hover:bg-[#F8F1E7]"
+                    >
+                      <Link href={`/school-tour?schoolId=${school.id}`}>
+                        <CalendarDays className="mr-2 h-4 w-4" />
+                        Book Tour
+                      </Link>
+                    </Button>
+
+                    <FavoriteButton schoolId={school.id} />
                   </div>
                 </div>
-
-                <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row">
-                  <Button
-                    asChild
-                    className="rounded-full bg-[#071B33] text-white hover:bg-[#0B2A4D]"
-                  >
-                    <Link href={`/schools/${school.id}`}>View School</Link>
-                  </Button>
-
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="rounded-full border-[#071B33]/15 text-[#071B33] hover:bg-[#F8F1E7]"
-                  >
-                    <Link href="/compare">
-                      <GitCompare className="mr-2 h-4 w-4" />
-                      Compare
-                    </Link>
-                  </Button>
-
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="rounded-full border-[#D6B46A]/60 text-[#071B33] hover:bg-[#F8F1E7]"
-                  >
-                    <Link href={`/school-tour?schoolId=${school.id}`}>
-                      <CalendarDays className="mr-2 h-4 w-4" />
-                      Book Tour
-                    </Link>
-                  </Button>
-
-                  <FavoriteButton schoolId={school.id} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
