@@ -3,7 +3,7 @@ export const siteConfig = {
   url: "https://heecoworld.com",
   title: "Find, Compare & Book School Tours in the UAE | HeecoWorld",
   description:
-    "HeecoWorld helps schools, colleges and institutions across the UAE organise educational industry visits, career awareness programs and experiential learning opportunities.",
+    "HeecoWorld helps UAE families discover schools, compare options, use Heeco Match™, shortlist schools and request school tours from one simple platform.",
   keywords: [
     "UAE schools",
     "Dubai schools",
