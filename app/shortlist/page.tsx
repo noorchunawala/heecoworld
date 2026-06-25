@@ -15,36 +15,51 @@ import {
   getSchoolListings,
   type SchoolListing,
 } from "@/lib/schoolListings";
+import { useAuth } from "@/components/AuthProvider";
+import { getFavoriteSchoolIds } from "@/lib/favorites";
+import BookTourInterestButton from "@/components/BookTourInterestButton";
 
-const FAVORITES_KEY = "heeco_favorite_school_ids";
+
 
 export default function ShortlistPage() {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [schools, setSchools] = useState<SchoolListing[]>([]);
   const [loading, setLoading] = useState(true);
+  const { status, user } = useAuth();
 
-  const loadFavorites = () => {
-    const stored = localStorage.getItem(FAVORITES_KEY);
-    const ids: string[] = stored ? JSON.parse(stored) : [];
-    setFavoriteIds(ids);
-  };
+ const loadFavorites = async () => {
+  if (status !== "authenticated" || !user) {
+    setFavoriteIds([]);
+    return;
+  }
 
-  useEffect(() => {
-    async function loadData() {
-      const data = await getSchoolListings();
-      setSchools(data);
-      loadFavorites();
-      setLoading(false);
+  const ids = await getFavoriteSchoolIds(user.id);
+  setFavoriteIds(ids);
+};
+
+useEffect(() => {
+  async function loadData() {
+    const data = await getSchoolListings();
+    setSchools(data);
+
+    if (status === "authenticated" && user) {
+      const ids = await getFavoriteSchoolIds(user.id);
+      setFavoriteIds(ids);
     }
 
+    setLoading(false);
+  }
+
+  if (status !== "loading") {
     loadData();
+  }
 
-    window.addEventListener("heeco-favorites-updated", loadFavorites);
+  window.addEventListener("heeco-favorites-updated", loadFavorites);
 
-    return () => {
-      window.removeEventListener("heeco-favorites-updated", loadFavorites);
-    };
-  }, []);
+  return () => {
+    window.removeEventListener("heeco-favorites-updated", loadFavorites);
+  };
+}, [status, user]);
 
   const shortlistedSchools = useMemo(() => {
     return schools.filter((school) => favoriteIds.includes(school.id));
@@ -116,19 +131,20 @@ export default function ShortlistPage() {
                 </Button>
 
                 {shortlistedSchools.length > 0 && (
-                  <Button
-                    asChild
-                    className="rounded-full bg-[#071B33] text-white hover:bg-[#0B2A4D]"
-                  >
-                    <Link
-                      href={`/school-tour?schoolIds=${shortlistedSchools
+                 
+                 
+                       <BookTourInterestButton
+                      schoolIds={[shortlistedSchools
                         .slice(0, 3)
                         .map((school) => school.id)
-                        .join(",")}`}
-                    >
-                      Book tours
-                    </Link>
-                  </Button>
+                        .join(",")]}
+                      schoolNames={[shortlistedSchools
+                        .slice(0, 3)
+                        .map((school) => school.name)
+                        .join(",")]}
+                      label="Book tours for selected schools"
+                    />
+                 
                 )}
               </div>
             </div>
@@ -246,16 +262,18 @@ export default function ShortlistPage() {
                       </Link>
                     </Button>
 
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="rounded-full border-[#D6B46A]/60 text-[#071B33] hover:bg-[#F8F1E7]"
-                    >
-                      <Link href={`/school-tour?schoolId=${school.id}`}>
+                    
+                      {/* <Link href={`/school-tour?schoolId=${school.id}`}>
                         <CalendarDays className="mr-2 h-4 w-4" />
                         Book Tour
-                      </Link>
-                    </Button>
+                      </Link> */}
+                      <CalendarDays className="mr-2 h-4 w-4" />
+                       <BookTourInterestButton
+                      schoolIds={[school.id]}
+                      schoolNames={[school.name]}
+                      label=" Book Tour"
+                    />
+              
 
                     <FavoriteButton schoolId={school.id} />
                   </div>

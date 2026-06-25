@@ -53,7 +53,7 @@ const priorityMessages: Record<string, string> = {
   const reasons: string[] = [];
 
   if (normalize(answers.emirate) === normalize(school.emirate)) {
-    score += 25;
+    score += 40;
     reasons.push(`Located in ${school.emirate}`);
   }
 
@@ -105,7 +105,7 @@ if (typeof answers.budget === "string") {
     typeof answers.priority === "string" &&
    school.priorities.map(normalize).includes(normalize(answers.priority))
   ) {
-    score += 15;
+    score += 0;
    reasons.push(
   priorityMessages[String(answers.priority)] ??
     `Strong focus on ${answers.priority}`

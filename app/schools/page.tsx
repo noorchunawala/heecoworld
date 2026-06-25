@@ -116,7 +116,7 @@ export default function SchoolsPage() {
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by school, curriculum or emirate..."
+                  placeholder="Search by school, area , curriculum or emirate..."
                   className="h-13 w-full rounded-full border border-slate-200 bg-slate-50 py-4 pl-12 pr-4 text-sm outline-none transition focus:border-[#D6B46A] focus:bg-white"
                 />
               </div>
@@ -160,7 +160,7 @@ export default function SchoolsPage() {
           {filteredSchools.map((school) => {
             const hasFeeRange =
               Boolean(school.feeRange?.min) && Boolean(school.feeRange?.max);
-
+            console.log(school);
             return (
               <div
                 key={school.id}
@@ -198,20 +198,25 @@ export default function SchoolsPage() {
                     </div>
 
                     <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                      {school.priorities.slice(0, 4).map((priority) => (
+                      {/* {school.grades.map((grade) => (
                         <div
-                          key={priority}
+                          key={grade}
                           className="rounded-2xl bg-[#FAF7F0] px-4 py-3 text-sm font-medium text-slate-700"
                         >
-                          {priority}
+                          {school.area}
                         </div>
-                      ))}
-
-                      {school.priorities.length === 0 && (
+                      ))} */}
+                    <div
+                          key={school.area}
+                          className="rounded-2xl bg-[#FAF7F0] px-4 py-3 text-sm font-medium text-slate-700"
+                        >
+                          {school.area}
+                        </div>
+                      {/* {school.grades.length === 0 && (
                         <div className="rounded-2xl bg-[#FAF7F0] px-4 py-3 text-sm font-medium text-slate-500">
-                          Priorities not added yet
+                          Grades not added by Admin
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </div>
 
@@ -245,16 +250,21 @@ export default function SchoolsPage() {
                     </Link>
                   </Button>
 
-                  <Button
+                  {/* <Button
                     asChild
                     variant="outline"
                     className="rounded-full border-[#D6B46A]/60 text-[#071B33] hover:bg-[#F8F1E7]"
-                  >
-                    <Link href={`/school-tour?schoolId=${school.id}`}>
+                  > */}
+                    {/* <Link href={`/school-tour?schoolId=${school.id}`}>
                       <CalendarDays className="mr-2 h-4 w-4" />
                       Book Tour
-                    </Link>
-                  </Button>
+                    </Link> */}
+                            {/* <BookTourInterestButton
+                      schoolIds={[school.id]}
+                      schoolNames={[school.name]}
+                      label="Book Tour"
+                    /> */}
+                  {/* </Button> */}
 
                   <FavoriteButton schoolId={school.id} />
                 </div>

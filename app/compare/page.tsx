@@ -14,6 +14,10 @@ import {
 } from "lucide-react";
 import { compareFields } from "@/data/compareFields";
 import { getSchoolListings, type SchoolListing } from "@/lib/schoolListings";
+import { useAuth } from "@/components/AuthProvider";
+import LoginRequiredModal from "@/components/LoginRequiredModal";
+import { isLoginRequired } from "@/lib/feature";
+import BookTourInterestButton from "@/components/BookTourInterestButton";
 
 const MAX_COMPARE = 3;
 
@@ -22,6 +26,21 @@ export default function ComparePage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
+  const { status } = useAuth();
+const [requiresLogin, setRequiresLogin] = useState(false);
+const [showLoginModal, setShowLoginModal] = useState(false);
+useEffect(() => {
+  async function loadFeatureSetting() {
+    const required = await isLoginRequired("compare");
+    setRequiresLogin(required);
+
+    if (required && status !== "loading" && status !== "authenticated") {
+      setShowLoginModal(true);
+    }
+  }
+
+  loadFeatureSetting();
+}, [status]);
 
   useEffect(() => {
     async function loadSchools() {
@@ -51,7 +70,10 @@ export default function ComparePage() {
       .filter((id) => validSchoolIds.has(id));
 
     const uniqueIds = Array.from(new Set(idsFromUrl)).slice(0, MAX_COMPARE);
-
+if (compareLocked) {
+  setShowLoginModal(true);
+  return;
+}
     if (uniqueIds.length > 0) {
       setSelectedIds(uniqueIds);
     }
@@ -85,8 +107,14 @@ export default function ComparePage() {
       })
       .slice(0, 8);
   }, [searchText, schools]);
+    const compareLocked =
+  requiresLogin && status !== "loading" && status !== "authenticated";
 
   const toggleSchool = (schoolId: string) => {
+    if (compareLocked) {
+  setShowLoginModal(true);
+  return;
+}
     setSelectedIds((current) => {
       if (current.includes(schoolId)) {
         return current.filter((id) => id !== schoolId);
@@ -115,8 +143,10 @@ export default function ComparePage() {
   const hasSearch = searchText.trim().length > 0;
 
   if (loading) {
+  
     return (
       <main className="min-h-screen bg-[#F8F1E7] px-4 py-16">
+    
         <div className="mx-auto max-w-7xl">
           <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-[#071B33]/8">
             <p className="text-sm font-medium text-slate-600">
@@ -130,6 +160,11 @@ export default function ComparePage() {
 
   return (
     <main className="min-h-screen bg-[#F8F1E7]">
+       <LoginRequiredModal
+  open={showLoginModal}
+  onClose={() => setShowLoginModal(false)}
+  feature="compare"
+/>
       <section className="relative overflow-hidden bg-[#071B33] px-4 py-16 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(214,180,106,0.22),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.16),transparent_34%)]" />
 
@@ -235,7 +270,11 @@ export default function ComparePage() {
                 <input
                   value={searchText}
                   onChange={(event) => setSearchText(event.target.value)}
-                  disabled={!canAddMore}
+                  readOnly={compareLocked}
+onClick={() => {
+  if (compareLocked) setShowLoginModal(true);
+}}
+disabled={!canAddMore}
                   placeholder={
                     canAddMore
                       ? "Search school name, emirate, curriculum or grades..."
@@ -364,14 +403,19 @@ export default function ComparePage() {
 
         {selectedSchools.length > 0 && (
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <Button
+            {/* <Button
               asChild
               className="rounded-full bg-[#071B33] text-white hover:bg-[#0B2A4D]"
-            >
-              <Link href={`/school-tour?schoolIds=${selectedIds.join(",")}`}>
+            > */}
+              {/* <Link href={`/school-tour?schoolIds=${selectedIds.join(",")}`}>
                 Book tours for selected schools
-              </Link>
-            </Button>
+              </Link> */}
+              <BookTourInterestButton
+  schoolIds={selectedIds}
+  schoolNames={selectedSchools.map((school) => school.name)}
+  label="Book tours for selected schools"
+/>
+            {/* </Button> */}
           </div>
         )}
 
@@ -520,15 +564,21 @@ export default function ComparePage() {
                             </Link>
                           </Button>
 
-                          <Button
+                          {/* <Button
                             asChild
                             variant="outline"
                             className="rounded-full border-[#D6B46A]/60 text-[#071B33] hover:bg-[#F8F1E7]"
-                          >
-                            <Link href={`/school-tour?schoolId=${school.id}`}>
+                          > */}
+                            {/* <Link href={`/school-tour?schoolId=${school.id}`}>
                               Book Tour
-                            </Link>
-                          </Button>
+                            </Link> */}
+                             <BookTourInterestButton
+  schoolIds={selectedIds}
+  schoolNames={selectedSchools.map((school) => school.name)}
+  label="Book Tour"
+/>
+            
+                          {/* </Button> */}
                         </div>
                       </td>
                     ))}

@@ -96,10 +96,10 @@ if (loading) {
                 <div className="rounded-2xl bg-[#071B33] p-5 text-white">
                   <School className="h-5 w-5 text-[#D6B46A]" />
                   <p className="mt-3 text-2xl font-semibold">
-                    {rankedSchools.length}
+                    {rankedSchools.length > 20 ? rankedSchools.slice(0,20).length:rankedSchools.length}
                   </p>
                   <p className="mt-1 text-sm text-slate-300">
-                    Schools matched
+                    Showing top 20 matches
                   </p>
                 </div>
 
@@ -175,7 +175,7 @@ if (loading) {
             </div>
 
             <div className="grid gap-5">
-              {otherMatches.map((school) => (
+              {otherMatches.slice(0,19).map((school) => (
                 <SchoolMatchCard key={school.id} school={school} />
               ))}
             </div>

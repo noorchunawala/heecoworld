@@ -1,6 +1,9 @@
+"use client";
 import Link from "next/link";
 import HeroV2 from "@/components/HeroV2";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/SupabaseClient";
 import {
   ArrowRight,
   CalendarDays,
@@ -14,6 +17,8 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
+
 
 const productSteps = [
   {
@@ -28,7 +33,7 @@ const productSteps = [
     description:
       "Answer guided questions and get school recommendations based on your needs.",
     icon: Sparkles,
-    href: "/HEECO-match",
+    href: "/heeco-match",
   },
   {
     title: "Compare shortlisted schools",
@@ -42,7 +47,7 @@ const productSteps = [
     description:
       "Request tours for one school or up to three shortlisted schools together.",
     icon: CalendarDays,
-    href: "/school-tour",
+    href: "#",
   },
 ];
 
@@ -61,6 +66,12 @@ const schoolBenefits = [
 ];
 
 export default function HomePage() {
+  
+  const { status, profile, user } = useAuth();
+
+  console.log("STATUS:", status);
+  console.log("USER:", user);
+  console.log("PROFILE:", profile);
   return (
     <main className="min-h-screen bg-[#F8F1E7]">
       <HeroV2 />
@@ -208,7 +219,7 @@ export default function HomePage() {
             asChild
             className="rounded-full bg-[#D6B46A] text-[#071B33] hover:bg-[#E3C982]"
           >
-            <Link href="/HEECO-match">
+            <Link href="/heeco-match">
               Start HEECO Match
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

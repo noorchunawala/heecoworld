@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Heart, Menu, X } from "lucide-react";
+import { Heart, Menu, X, User } from "lucide-react";
 import Container from "./Container";
+import { useAuth } from "@/components/AuthProvider";
+
+import { useUI } from "@/components/UIProvider";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -18,17 +21,19 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+const { status } = useAuth();
+const { openAccount } = useUI();
 
   const isActive = (href: string) => {
-    if (href === "/") {
-      return pathname === "/";
-    }
-
+    if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
   };
 
+
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/85 backdrop-blur-xl">
+     
       <Container>
         <div className="flex h-20 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
@@ -40,9 +45,8 @@ export default function Navbar() {
               <h1 className="text-lg font-bold tracking-tight text-[#071B33]">
                 Heeco
               </h1>
-
               <p className="text-xs text-slate-500">
-               Hub of Experiential Education
+                Hub of Experiential Education
               </p>
             </div>
           </Link>
@@ -53,9 +57,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`transition hover:text-[#B58A34] ${
-                  isActive(link.href)
-                    ? "text-[#B58A34]"
-                    : "text-slate-700"
+                  isActive(link.href) ? "text-[#B58A34]" : "text-slate-700"
                 }`}
               >
                 {link.label}
@@ -71,6 +73,23 @@ export default function Navbar() {
             >
               <Heart className="h-4 w-4" />
             </Link>
+
+            {status === "authenticated" ? (
+            <button
+ onClick={openAccount}
+  className="flex items-center gap-2 rounded-full border border-[#071B33]/10 px-4 py-2 text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+>
+  <User className="h-4 w-4" />
+  My Account
+</button>
+            ) : (
+              <Link
+                href="/login"
+                className="rounded-full border border-[#071B33]/15 px-5 py-2.5 text-sm font-semibold text-[#071B33] transition hover:bg-[#F8F1E7]"
+              >
+                Continue with Email
+              </Link>
+            )}
 
             <Link
               href="/for-schools"
@@ -107,12 +126,33 @@ export default function Navbar() {
                 </Link>
               ))}
 
-             <Link
-              href="/for-schools"
-              className="rounded-full bg-[#071B33] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0B2A4D]"
-            >
-              List Your School
-            </Link>
+              {status === "authenticated" ? (
+               <button
+ onClick={() => {
+  setOpen(false);
+  openAccount();
+}}
+  className="block w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+>
+  My Account
+</button>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-3 text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+                >
+                  Continue with Email
+                </Link>
+              )}
+
+              <Link
+                href="/for-schools"
+                onClick={() => setOpen(false)}
+                className="block rounded-full bg-[#071B33] px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-[#0B2A4D]"
+              >
+                List Your School
+              </Link>
             </div>
           </div>
         )}

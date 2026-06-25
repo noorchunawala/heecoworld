@@ -59,20 +59,20 @@ export const heecoMatchQuestions = [
     ],
   },
   
-  {
-    id: "priority",
-    type: "single-choice",
-    step: 5,
-    title: "What matters most to you?",
-   options: [
-  { id: "Academic focus", label: "Academic Focus" },
-  { id: "Affordable fees", label: "Affordable Fees" },
-  { id: "Sports", label: "Sports & Activities" },
-  { id: "STEM", label: "STEM / Innovation" },
-  { id: "Career exposure", label: "Career Exposure" },
-  { id: "Industrial visits", label: "Industrial Visits" },
-],
-  },
+//   {
+//     id: "priority",
+//     type: "single-choice",
+//     step: 5,
+//     title: "What matters most to you?",
+//    options: [
+//   { id: "Academic focus", label: "Academic Focus" },
+//   { id: "Affordable fees", label: "Affordable Fees" },
+//   { id: "Sports", label: "Sports & Activities" },
+//   { id: "STEM", label: "STEM / Innovation" },
+//   { id: "Career exposure", label: "Career Exposure" },
+//   { id: "Industrial visits", label: "Industrial Visits" },
+// ],
+//   },
 ];
 export const cbseGradeOptions = [
   { id: "KG1", label: "KG1" },

@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/components/AuthProvider";
 
-const FAVORITES_KEY = "heeco_favorite_school_ids";
+import {
+  addFavoriteSchool,
+  removeFavoriteSchool,
+  getFavoriteSchoolIds,
+} from "@/lib/favorites";
 
 type FavoriteButtonProps = {
   schoolId: string;
@@ -18,28 +24,55 @@ export default function FavoriteButton({
   showText = true,
   className,
 }: FavoriteButtonProps) {
+  const { status ,user } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false);
 
-  useEffect(() => {
-    const stored = localStorage.getItem(FAVORITES_KEY);
-    const favoriteIds: string[] = stored ? JSON.parse(stored) : [];
+useEffect(() => {
+  async function loadFavorite() {
+    if (status !== "authenticated" || !user) {
+      setIsFavorite(false);
+      return;
+    }
 
-    setIsFavorite(favoriteIds.includes(schoolId));
-  }, [schoolId]);
+    const ids = await getFavoriteSchoolIds(user.id);
+    setIsFavorite(ids.includes(schoolId));
+  }
 
-  const toggleFavorite = () => {
-    const stored = localStorage.getItem(FAVORITES_KEY);
-    const favoriteIds: string[] = stored ? JSON.parse(stored) : [];
+  loadFavorite();
+}, [status, user, schoolId]);
 
-    const updatedIds = favoriteIds.includes(schoolId)
-      ? favoriteIds.filter((id) => id !== schoolId)
-      : [...favoriteIds, schoolId];
+  if (status !== "authenticated") {
+    return (
+      <Button
+        asChild
+        type="button"
+        variant="outline"
+        className={cn(
+          "rounded-full border-[#D6B46A]/60 text-[#071B33] hover:bg-[#F8F1E7]",
+          className
+        )}
+      >
+        <Link href="/login">
+          <Heart className="mr-2 h-4 w-4" />
+          {showText ? "Login to shortlist" : null}
+        </Link>
+      </Button>
+    );
+  }
 
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedIds));
-    setIsFavorite(updatedIds.includes(schoolId));
+ const toggleFavorite = async () => {
+  if (!user) return;
 
-    window.dispatchEvent(new Event("heeco-favorites-updated"));
-  };
+  if (isFavorite) {
+    await removeFavoriteSchool(user.id, schoolId);
+    setIsFavorite(false);
+  } else {
+    await addFavoriteSchool(user.id, schoolId);
+    setIsFavorite(true);
+  }
+
+  window.dispatchEvent(new Event("heeco-favorites-updated"));
+};
 
   return (
     <Button

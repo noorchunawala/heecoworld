@@ -16,7 +16,7 @@ const productLinks = [
   { label: "Schools", href: "/schools" },
   { label: "Heeco Match™", href: "/heeco-match" },
   { label: "Compare Schools", href: "/compare" },
-  { label: "Book School Tour", href: "/school-tour" },
+  { label: "Book School Tour", href: "#" },
   { label: "List Your School", href: "/for-schools" },
 ];
 
@@ -44,7 +44,7 @@ const featureLinks = [
   },
   {
     label: "Request school tours",
-    href: "/school-tour",
+    href: "#",
     icon: CalendarDays,
   },
   {

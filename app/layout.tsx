@@ -4,6 +4,10 @@ import { siteConfig } from "@/constants/site";
 import Navbar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import EnquiryModal from "@/components/EnquiryModel";
+import { AuthProvider } from "@/components/AuthProvider";
+import ProfileCompletionGuard from "@/components/ProfileCompletionGuard";
+import { UIProvider } from "@/components/UIProvider";
+
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -34,10 +38,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-         <Navbar />
-        {children}
-         <Footer />
-          <EnquiryModal />
+      <AuthProvider>
+  <UIProvider>
+    <ProfileCompletionGuard />
+    <Navbar />
+    {children}
+    <Footer />
+    <EnquiryModal />
+  </UIProvider>
+</AuthProvider>
         </body>
     </html>
   );

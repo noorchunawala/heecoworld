@@ -132,7 +132,7 @@ export default function SchoolMatchCard({ school }: SchoolMatchCardProps) {
   </Link>
 </Button>
 
-       <Button
+       {/* <Button
   asChild
   variant="outline"
   className="rounded-full border-[#D6B46A]/60 text-[#071B33] hover:bg-[#F8F1E7]"
@@ -141,7 +141,7 @@ export default function SchoolMatchCard({ school }: SchoolMatchCardProps) {
     <CalendarDays className="mr-2 h-4 w-4" />
     Book Tour
   </Link>
-</Button>
+</Button> */}
 <FavoriteButton schoolId={school.id} />
       </div>
     </div>

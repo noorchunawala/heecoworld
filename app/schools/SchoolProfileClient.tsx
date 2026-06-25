@@ -18,6 +18,10 @@ import {
 } from "lucide-react";
 import type { SchoolDetailListing } from "@/lib/schoolListings";
 import { supabase } from "@/lib/SupabaseClient";
+import SchoolReviews from "@/components/schools/SchoolReviews";
+import { useAuth } from "@/components/AuthProvider";
+import LoginRequiredModal from "@/components/LoginRequiredModal";
+import BookTourInterestButton from "@/components/BookTourInterestButton";
 
 type TabKey =
   | "overview"
@@ -28,8 +32,8 @@ type TabKey =
   | "inspection"
   | "parentGuide"
   | "visitChecklist"
-  | "qa"
-  | "contact";
+  | "contact"
+  | "reviews";
 
 type SchoolFeeRow = {
   id?: string;
@@ -150,7 +154,7 @@ const profileTabs: { key: TabKey; label: string }[] = [
   { key: "facilities", label: "Facilities" },
   { key: "inspection", label: "Inspection" },
   { key: "parentGuide", label: "Parent Guide" },
-  { key: "qa", label: "Q&A" },
+  { key: "reviews", label: "Reviews" },
   { key: "contact", label: "Contact" },
 ];
 
@@ -159,6 +163,9 @@ export default function SchoolProfileClient({
 }: {
   school: SchoolProfile;
 }) {
+const { status } = useAuth();
+const [showLoginModal, setShowLoginModal] = useState(false);
+
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   useEffect(() => {
   async function trackSchoolView() {
@@ -314,6 +321,13 @@ export default function SchoolProfileClient({
 
   return (
     <main className="min-h-screen bg-[#F8F1E7]">
+      <LoginRequiredModal
+  open={showLoginModal}
+  onClose={() => setShowLoginModal(false)}
+  title="Unlock full school profile"
+  feature="reviews"
+  description="Create your free account to read reviews of students , parents and alumini."
+/>
       <section className="relative overflow-hidden bg-[#071B33] px-4 py-14 sm:px-6 lg:px-8">
         {school.heroVideoUrl ? (
           <video
@@ -398,15 +412,18 @@ export default function SchoolProfileClient({
               <p className="mt-2 text-sm text-slate-300">per academic year</p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row lg:flex-col">
-                <Button
-                  asChild
-                  className="rounded-full bg-[#D6B46A] text-[#071B33] hover:bg-[#E3C982]"
-                >
-                  <Link href={`/school-tour?schoolId=${school.id}`}>
+              
+                  {/* <Link href={`/school-tour?schoolId=${school.id}`}>
                     <CalendarDays className="mr-2 h-4 w-4" />
                     Book Tour
-                  </Link>
-                </Button>
+                  </Link> */}
+<CalendarDays className="mr-2 h-4 w-4" />
+                  <BookTourInterestButton
+                                        schoolIds={[school.id]}
+                                        schoolNames={[school.name]}
+                                        label="Book Tour"
+                                      />
+               
 
                 <Button
                   asChild
@@ -426,7 +443,7 @@ export default function SchoolProfileClient({
         </div>
       </section>
 
-      <nav className="sticky top-0 z-30 border-b border-[#E8DCC8] bg-[#F8F1E7]/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+      <nav className="sticky top-0  border-b border-[#E8DCC8] bg-[#F8F1E7]/95 px-4 backdrop-blur sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl gap-3 overflow-x-auto py-4">
           {profileTabs.map((tab) => {
             const isActive = activeTab === tab.key;
@@ -435,7 +452,14 @@ export default function SchoolProfileClient({
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => setActiveTab(tab.key)}
+               onClick={() => {
+  if (tab.key == "reviews" && status !== "authenticated") {
+    setShowLoginModal(true);
+    return;
+  }
+
+  setActiveTab(tab.key);
+}}
                 className={[
                   "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold shadow-sm transition",
                   isActive
@@ -516,10 +540,10 @@ export default function SchoolProfileClient({
                         <thead className="bg-white text-slate-500">
                           <tr>
                             <TableHead>Grade / Year</TableHead>
+                            <TableHead>Previous year</TableHead>
+                            <TableHead>Previous year fee</TableHead>
                             <TableHead>Current year</TableHead>
                             <TableHead>Current fee</TableHead>
-                            <TableHead>Next year</TableHead>
-                            <TableHead>Next fee</TableHead>
                             <TableHead>Notes</TableHead>
                           </tr>
                         </thead>
@@ -827,7 +851,7 @@ export default function SchoolProfileClient({
               </SectionCard>
             )}
 
-            {activeTab === "qa" && (
+            {/* {activeTab === "qa" && (
               <SectionCard
                 eyebrow="Q&A"
                 title="Common parent questions"
@@ -853,7 +877,7 @@ export default function SchoolProfileClient({
                   <EmptyState message="No Q&A added by admin yet." />
                 )}
               </SectionCard>
-            )}
+            )} */}
 
             {activeTab === "contact" && (
               <SectionCard
@@ -898,9 +922,18 @@ export default function SchoolProfileClient({
 </div>
               </SectionCard>
             )}
+         {activeTab === "reviews" && (
+  <SectionCard
+    eyebrow="Reviews"
+    title="Parent, Student & Alumni Reviews"
+    description="Verified reviews from the HeecoWorld community."
+  >
+    <SchoolReviews schoolId={school.id} />
+  </SectionCard>
+)}
           </div>
 
-          <aside className="space-y-8 lg:sticky lg:top-24 lg:self-start">
+          <aside className="space-y-8  lg:top-24 lg:self-start">
             <div className="rounded-[2rem] border border-white/80 bg-white p-6 shadow-xl shadow-[#071B33]/8">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#B58A34]">
                 At a glance
@@ -936,14 +969,17 @@ export default function SchoolProfileClient({
                 Request a school tour and compare real details before applying.
               </p>
 
-              <Button
-                asChild
-                className="mt-6 w-full rounded-full bg-[#D6B46A] text-[#071B33] hover:bg-[#E3C982]"
-              >
-                <Link href={`/school-tour?schoolId=${school.id}`}>
+             
+                {/* <Link href={`/school-tour?schoolId=${school.id}`}>
                   Book School Tour
-                </Link>
-              </Button>
+                </Link> */}
+   <BookTourInterestButton
+                                        schoolIds={[school.id]}
+                                        schoolNames={[school.name]}
+                                        label="Book Tour"
+                                      />
+                
+           
             </div>
           </aside>
         </div>

@@ -128,7 +128,13 @@ body {
 html {
   scroll-behavior: smooth;
 }
+body.review-modal-open header {
+  display: none;
+}
 
+body.review-modal-open {
+  overflow: hidden;
+}
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
