@@ -19,7 +19,7 @@ export default function ImportKhdaPage() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/api/admin/import-khda-profiles", {
+    const response = await fetch("/api/admin/import-spea", {
       method: "POST",
       body: formData,
     });

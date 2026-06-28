@@ -18,6 +18,8 @@ import { useAuth } from "@/components/AuthProvider";
 import LoginRequiredModal from "@/components/LoginRequiredModal";
 import { isLoginRequired } from "@/lib/feature";
 import BookTourInterestButton from "@/components/BookTourInterestButton";
+import { trackCompareAdded ,trackComparisonCompleted } from "@/lib/analytics";
+
 
 const MAX_COMPARE = 3;
 
@@ -76,6 +78,7 @@ if (compareLocked) {
 }
     if (uniqueIds.length > 0) {
       setSelectedIds(uniqueIds);
+   
     }
   }, [schools, validSchoolIds]);
 
@@ -84,6 +87,26 @@ if (compareLocked) {
       .map((id) => schools.find((school) => school.id === id))
       .filter((school): school is SchoolListing => Boolean(school));
   }, [selectedIds, schools]);
+  useEffect(() => {
+  if (selectedSchools.length < 2) return;
+
+  const key = `comparison_${selectedSchools
+    .map((school) => school.id)
+    .sort()
+    .join("_")}`;
+
+  if (sessionStorage.getItem(key)) return;
+
+  sessionStorage.setItem(key, "true");
+
+  trackComparisonCompleted(
+    selectedSchools.map((school) => ({
+      id: school.id,
+      name: school.name,
+      emirate: school.emirate,
+    }))
+  );
+}, [selectedSchools]);
 
   const filteredSchools = useMemo(() => {
     const query = searchText.trim().toLowerCase();
@@ -110,25 +133,35 @@ if (compareLocked) {
     const compareLocked =
   requiresLogin && status !== "loading" && status !== "authenticated";
 
-  const toggleSchool = (schoolId: string) => {
-    if (compareLocked) {
-  setShowLoginModal(true);
-  return;
-}
-    setSelectedIds((current) => {
-      if (current.includes(schoolId)) {
-        return current.filter((id) => id !== schoolId);
-      }
+ const toggleSchool = (schoolId: string) => {
+  if (compareLocked) {
+    setShowLoginModal(true);
+    return;
+  }
 
-      if (current.length >= MAX_COMPARE) {
-        return current;
-      }
+  setSelectedIds((current) => {
+    if (current.includes(schoolId)) {
+      return current.filter((id) => id !== schoolId);
+    }
 
-      return [...current, schoolId];
-    });
+    if (current.length >= MAX_COMPARE) {
+      return current;
+    }
 
-    setSearchText("");
-  };
+    const school = schools.find((s) => s.id === schoolId);
+
+    if (school) {
+      trackCompareAdded({
+        id: school.id,
+        name: school.name,
+      });
+    }
+
+    return [...current, schoolId];
+  });
+
+  setSearchText("");
+};
 
   const removeSchool = (schoolId: string) => {
     setSelectedIds((current) => current.filter((id) => id !== schoolId));

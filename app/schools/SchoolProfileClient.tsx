@@ -22,6 +22,14 @@ import SchoolReviews from "@/components/schools/SchoolReviews";
 import { useAuth } from "@/components/AuthProvider";
 import LoginRequiredModal from "@/components/LoginRequiredModal";
 import BookTourInterestButton from "@/components/BookTourInterestButton";
+import {
+  trackProfileView,
+  trackWebsiteClick,
+  trackPhoneClick,
+  trackEmailClick,
+  trackMapClick,
+} from "@/lib/analytics";
+import { getDataSource } from "@/lib/dataSource";
 
 type TabKey =
   | "overview"
@@ -165,6 +173,17 @@ export default function SchoolProfileClient({
 }) {
 const { status } = useAuth();
 const [showLoginModal, setShowLoginModal] = useState(false);
+
+const dataSource = getDataSource(school.emirate);
+
+useEffect(() => {
+  const key = `heeco_profile_view_${school.id}`;
+
+  if (sessionStorage.getItem(key)) return;
+
+  sessionStorage.setItem(key, "true");
+  trackProfileView(school);
+}, [school.id]);
 
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   useEffect(() => {
@@ -417,7 +436,7 @@ const [showLoginModal, setShowLoginModal] = useState(false);
                     <CalendarDays className="mr-2 h-4 w-4" />
                     Book Tour
                   </Link> */}
-<CalendarDays className="mr-2 h-4 w-4" />
+
                   <BookTourInterestButton
                                         schoolIds={[school.id]}
                                         schoolNames={[school.name]}
@@ -891,6 +910,10 @@ const [showLoginModal, setShowLoginModal] = useState(false);
                       <ContactCard
                         key={contact.id || `${contact.type}-${index}`}
                         contact={contact}
+                         school={{
+    id: school.id,
+    name: school.name,
+  }}
                       />
                     ))
                   ) : (
@@ -916,6 +939,12 @@ const [showLoginModal, setShowLoginModal] = useState(false);
     target="_blank"
     rel="noreferrer"
     className="inline-flex rounded-full bg-[#071B33] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0B2A4D]"
+    onClick={() =>
+  trackMapClick({
+    id: school.id,
+    name: school.name,
+  })
+}
   >
     Open in Google Maps
   </a>
@@ -984,6 +1013,33 @@ const [showLoginModal, setShowLoginModal] = useState(false);
           </aside>
         </div>
       </section>
+      {dataSource && (
+  <section className="mt-10 rounded-3xl border border-slate-200 bg-[#FAF7F0] p-6">
+    <h3 className="text-lg font-semibold text-[#071B33]">
+      Data Source
+    </h3>
+
+    <p className="mt-3 text-sm leading-7 text-slate-600">
+      Information displayed on this page, including school details,
+      inspection information and regulatory data, has been sourced
+      from the{" "}
+      <strong>{dataSource.fullName}</strong> where applicable.
+    </p>
+
+    <p className="mt-3 text-sm leading-7 text-slate-600">
+      HeecoWorld is an independent education platform and is not
+      affiliated with, endorsed by, or operated by{" "}
+      <strong>{dataSource.authority}</strong>.
+    </p>
+
+    <p className="mt-3 text-xs text-slate-500">
+      Data is periodically updated from publicly available sources.
+      While we strive to keep information accurate and current,
+      parents are encouraged to verify important details directly
+      with the school or the relevant education authority.
+    </p>
+  </section>
+)}
     </main>
   );
 }
@@ -1160,7 +1216,13 @@ function SidebarFact({
   );
 }
 
-function ContactCard({ contact }: { contact: SchoolContact }) {
+function ContactCard({
+  contact,
+  school,
+}: {
+  contact: SchoolContact;
+  school: { id: string; name: string };
+}) {
   const icon =
     contact.type === "phone" || contact.type === "whatsapp" ? (
       <Phone className="h-5 w-5" />
@@ -1190,9 +1252,27 @@ function ContactCard({ contact }: { contact: SchoolContact }) {
 
   if (contact.href) {
     return (
-      <a href={contact.href} target="_blank" rel="noreferrer">
-        {content}
-      </a>
+      <a
+  href={contact.href}
+  target="_blank"
+  rel="noreferrer"
+  onClick={() => {
+    switch (contact.type) {
+      case "website":
+        trackWebsiteClick(school);
+        break;
+
+      case "phone":
+      case "whatsapp":
+        trackPhoneClick(school);
+        break;
+
+      case "email":
+        trackEmailClick(school);
+        break;
+    }
+  }}
+></a>
     );
   }
 

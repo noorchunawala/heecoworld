@@ -6,6 +6,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const schoolIds: string[] = body.schoolIds || [];
     const schoolNames: string[] = body.schoolNames || [];
+    const email: string | null = body.email || null;
 
     if (!schoolIds.length) {
       return NextResponse.json(
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
       school_ids: schoolIds,
       school_names:schoolNames,
       parent_name: "Interest captured",
-      email: null,
+      email: email,
       mobile: "+9710123456789",
       child_grade: null,
       preferred_date: null,

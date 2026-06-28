@@ -5,6 +5,7 @@ import { CalendarDays, GitCompare, School, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSchoolListings, type SchoolListing } from "@/lib/schoolListings";
 import type { MatchableSchool } from "@/lib/matching"
+import { trackMatchResult } from "@/lib/analytics";
 
 type ResultsScreenProps = {
   answers: MatchAnswers;
@@ -47,6 +48,22 @@ useEffect(() => {
   loadSchools();
 }, []);
  const rankedSchools = rankSchools(schools, answers);
+ const topResults = rankedSchools.slice(0, 20);
+ useEffect(() => {
+  if (loading) return;
+  if (topResults.length === 0) return;
+
+  topResults.forEach((school, index) => {
+    trackMatchResult(
+      {
+        id: school.id,
+        name: school.name,
+        emirate: school.emirate,
+      },
+      school.matchScore || 0
+    );
+  });
+}, [loading, topResults]);
 if (loading) {
   return (
     <div className="min-h-[calc(100vh-80px)] bg-[#F8F1E7] px-4 py-10">
@@ -54,8 +71,10 @@ if (loading) {
     </div>
   );
 }
-  const bestMatch = rankedSchools[0];
-  const otherMatches = rankedSchools.slice(1);
+
+
+  const bestMatch = topResults[0];
+const otherMatches = topResults.slice(1);
 
   return (
     <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-[#F8F1E7] px-4 py-10 sm:px-6 lg:px-8">
@@ -96,7 +115,7 @@ if (loading) {
                 <div className="rounded-2xl bg-[#071B33] p-5 text-white">
                   <School className="h-5 w-5 text-[#D6B46A]" />
                   <p className="mt-3 text-2xl font-semibold">
-                    {rankedSchools.length > 20 ? rankedSchools.slice(0,20).length:rankedSchools.length}
+                   {topResults.length}
                   </p>
                   <p className="mt-1 text-sm text-slate-300">
                     Showing top 20 matches
@@ -175,7 +194,7 @@ if (loading) {
             </div>
 
             <div className="grid gap-5">
-              {otherMatches.slice(0,19).map((school) => (
+              {otherMatches.map((school) => (
                 <SchoolMatchCard key={school.id} school={school} />
               ))}
             </div>
