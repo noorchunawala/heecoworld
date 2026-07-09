@@ -111,7 +111,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
         reviewerName: profile.full_name,
       });
 
-      alert("Thank you for sharing your experience! Your review has been submitted successfully and will be reviewed by the HeecoWorld team before it is published. This helps us maintain a trustworthy and respectful community for everyone.");
+      alert("Thank you for sharing your experience! Your review has been submitted successfully and will be reviewed by the Scoolyx team before it is published. This helps us maintain a trustworthy and respectful community for everyone.");
 
       closeModal();
       setTitle("");
@@ -136,10 +136,10 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
         feature="reviews"
       />
 
-      <div className="rounded-2xl bg-[#FAF7F0] p-5">
+      <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-lg shadow-violet-500/5">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <p className="text-4xl font-semibold text-[#071B33]">
+            <p className="text-4xl font-semibold text-[#111135]">
               {averageRating ? averageRating.toFixed(1) : "—"}
             </p>
 
@@ -153,7 +153,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
           <button
             type="button"
             onClick={handleWriteReview}
-            className="rounded-full bg-[#071B33] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0B2A4D]"
+            className="rounded-full bg-[#111135] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1D1B4F]"
           >
             Write a Review
           </button>
@@ -173,8 +173,8 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
             onClick={() => setFilter(item.key as ReviewerType)}
             className={`rounded-full px-4 py-2 text-sm font-semibold ${
               filter === item.key
-                ? "bg-[#071B33] text-white"
-                : "bg-[#F8F1E7] text-[#071B33]"
+                ? "bg-[#111135] text-white"
+                : "bg-[#F7F6FF] text-[#111135]"
             }`}
           >
             {item.label}
@@ -183,29 +183,29 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
       </div>
 
       {showReviewModal && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center overflow-hidden bg-[#071B33]/80 p-4 backdrop-blur-md">
-          <div className="flex h-[78vh] w-full max-w-xl flex-col overflow-hidden rounded-[2rem] bg-white shadow-2xl">
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center overflow-hidden bg-[#111135]/80 p-4 backdrop-blur-md">
+          <div className="flex h-[78vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-900/20">
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-5">
               <div>
-                <h3 className="text-xl font-semibold text-[#071B33]">
+                <h3 className="text-xl font-semibold text-[#111135]">
                   Write a Review
                 </h3>
                 <p className="mt-1 text-xs leading-5 text-slate-600">
-                  Reviews are moderated by HeecoWorld before publication.
+                  Reviews are moderated by Scoolyx before publication.
                 </p>
               </div>
 
               <button
                 type="button"
                 onClick={closeModal}
-                className="rounded-full bg-slate-100 p-2 text-[#071B33] hover:bg-slate-200"
+                className="rounded-full bg-[#F7F6FF] p-2 text-[#111135] transition hover:bg-slate-100"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto p-5">
-              <div className="rounded-3xl bg-[#FFFBF3] p-4">
+              <div className="rounded-3xl bg-[#F7F6FF] p-4">
                 <div className="space-y-3">
                   <RatingRow
                     label="Academics"
@@ -234,7 +234,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
                   />
                 </div>
 
-                <div className="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-[#071B33]">
+                <div className="mt-4 rounded-3xl bg-white px-4 py-3 text-sm font-semibold text-[#111135]">
                   Overall Rating: {calculatedRating}/5
                 </div>
               </div>
@@ -243,7 +243,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Review title"
-                className="mt-4 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#D6B46A]"
+                className="mt-4 w-full rounded-3xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#5B3DF5]"
               />
 
               <textarea
@@ -251,7 +251,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
                 onChange={(e) => setReviewText(e.target.value)}
                 placeholder="Tell other families about your experience..."
                 rows={3}
-                className="mt-3 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#D6B46A]"
+                className="mt-3 w-full rounded-3xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#5B3DF5]"
               />
             </div>
 
@@ -268,7 +268,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
                 type="button"
                 onClick={submitReview}
                 disabled={saving}
-                className="flex-1 rounded-full bg-[#071B33] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="flex-1 rounded-full bg-[#111135] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 {saving ? "Submitting..." : "Submit Review"}
               </button>
@@ -279,15 +279,15 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
 
       <div className="mt-6 space-y-4">
         {filteredReviews.length === 0 ? (
-          <div className="rounded-2xl bg-white p-6 text-sm text-slate-500">
+          <div className="rounded-3xl border border-dashed border-slate-200 bg-[#F7F6FF] p-6 text-center text-sm font-semibold text-slate-500">
             No reviews yet.
           </div>
         ) : (
           visibleReviews.map((review) => (
-            <div key={review.id} className="rounded-2xl bg-white p-5">
+            <div key={review.id} className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
               <StarDisplay value={Number(review.rating || 0)} />
 
-              <h3 className="mt-3 font-semibold text-[#071B33]">
+              <h3 className="mt-3 font-semibold text-[#111135]">
                 {review.title}
               </h3>
 
@@ -295,7 +295,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
                 {review.review_text}
               </p>
 
-              <p className="mt-3 text-xs font-semibold uppercase text-[#B58A34]">
+              <p className="mt-4 text-xs font-black uppercase tracking-[0.14em] text-[#5B3DF5]">
                {review.reviewer_name} - Verified {review.reviewer_type}
               </p>
             </div>
@@ -305,7 +305,7 @@ const visibleReviews = filteredReviews.slice(0, visibleCount);
   <button
     type="button"
     onClick={() => setVisibleCount((current) => current + 5)}
-    className="mt-4 rounded-full border border-[#D6B46A]/60 px-5 py-3 text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+    className="mt-4 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-[#111135] transition hover:bg-[#F7F6FF]"
   >
     Show more reviews
   </button>
@@ -326,7 +326,7 @@ function RatingRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <span className="text-sm font-semibold text-[#071B33]">{label}</span>
+      <span className="text-sm font-semibold text-[#111135]">{label}</span>
 
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -335,7 +335,7 @@ function RatingRow({
             type="button"
             onClick={() => onChange(star)}
             className={`flex h-8 w-8 items-center justify-center rounded-full text-xl transition hover:bg-white ${
-              value >= star ? "text-[#B58A34]" : "text-slate-300"
+              value >= star ? "text-amber-400" : "text-slate-300"
             }`}
           >
             ★
@@ -352,7 +352,7 @@ function StarDisplay({ value }: { value: number }) {
       {[1, 2, 3, 4, 5].map((star) => (
         <span
           key={star}
-          className={value >= star ? "text-[#B58A34]" : "text-slate-300"}
+          className={value >= star ? "text-amber-400" : "text-slate-300"}
         >
           ★
         </span>

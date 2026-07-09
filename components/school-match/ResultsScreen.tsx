@@ -66,7 +66,7 @@ useEffect(() => {
 }, [loading, topResults]);
 if (loading) {
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-[#F8F1E7] px-4 py-10">
+    <div className="min-h-[calc(100vh-80px)] bg-[#F7F6FF] px-4 py-10">
       Loading matched schools...
     </div>
   );
@@ -77,20 +77,20 @@ if (loading) {
 const otherMatches = topResults.slice(1);
 
   return (
-    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-[#F8F1E7] px-4 py-10 sm:px-6 lg:px-8">
+    <div className="relative min-h-[calc(100vh-80px)] overflow-hidden bg-[#F7F6FF] px-4 py-10 sm:px-6 lg:px-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(214,180,106,0.22),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(7,27,51,0.10),transparent_34%)]" />
 
       <div className="relative mx-auto max-w-6xl">
-        <div className="mb-8 rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-2xl shadow-[#071B33]/10 backdrop-blur">
+        <div className="mb-8 rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-2xl shadow-[#111135]/10 backdrop-blur">
           <div className="rounded-[1.5rem] bg-white p-6 shadow-sm sm:p-8 lg:p-10">
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#F8F1E7] px-4 py-2 text-sm font-semibold text-[#071B33]">
-                  <Sparkles className="h-4 w-4 text-[#B58A34]" />
-                  Heeco Match
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#F7F6FF] px-4 py-2 text-sm font-semibold text-[#111135]">
+                  <Sparkles className="h-4 w-4 text-[#5B3DF5]" />
+                  Scoolyx Match
                 </div>
 
-                <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-[#071B33] sm:text-5xl">
+                <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-[#111135] sm:text-5xl">
                   Your best school match is ready.
                 </h1>
 
@@ -105,15 +105,15 @@ const otherMatches = topResults.slice(1);
                 <button
   type="button"
   onClick={onRematch}
-  className="mt-5 rounded-full border border-[#071B33]/20 bg-white px-5 py-3 text-sm font-semibold text-[#071B33] hover:bg-[#F8F1E7]"
+  className="mt-5 rounded-full border border-[#111135]/20 bg-white px-5 py-3 text-sm font-semibold text-[#111135] hover:bg-[#F7F6FF]"
 >
   Start a new match
 </button>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                <div className="rounded-2xl bg-[#071B33] p-5 text-white">
-                  <School className="h-5 w-5 text-[#D6B46A]" />
+                <div className="rounded-2xl bg-[#111135] p-5 text-white">
+                  <School className="h-5 w-5 text-[#A99BFF]" />
                   <p className="mt-3 text-2xl font-semibold">
                    {topResults.length}
                   </p>
@@ -122,15 +122,15 @@ const otherMatches = topResults.slice(1);
                   </p>
                 </div>
 
-                <div className="rounded-2xl bg-[#F8F1E7] p-5 text-[#071B33]">
-                  <GitCompare className="h-5 w-5 text-[#B58A34]" />
+                <div className="rounded-2xl bg-[#F7F6FF] p-5 text-[#111135]">
+                  <GitCompare className="h-5 w-5 text-[#5B3DF5]" />
                   <p className="mt-3 text-lg font-semibold">Compare</p>
                   <p className="mt-1 text-sm text-slate-600">
                     Review your shortlist
                   </p>
                 </div>
 
-                <div className="rounded-2xl bg-[#F3E3C3] p-5 text-[#071B33]">
+                <div className="rounded-2xl bg-[#F3E3C3] p-5 text-[#111135]">
                   <CalendarDays className="h-5 w-5 text-[#8A651F]" />
                   <p className="mt-3 text-lg font-semibold">Tour</p>
                   <p className="mt-1 text-sm text-slate-700">
@@ -146,10 +146,10 @@ const otherMatches = topResults.slice(1);
           <div className="mb-10">
             <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#B58A34]">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#5B3DF5]">
                   Best match
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-[#071B33]">
+                <h2 className="mt-2 text-2xl font-semibold text-[#111135]">
                   Recommended first for your family
                 </h2>
               </div>
@@ -160,8 +160,8 @@ const otherMatches = topResults.slice(1);
               </p>
             </div>
 
-            <div className="rounded-[2rem] border border-[#D6B46A]/50 bg-white/80 p-3 shadow-xl shadow-[#071B33]/10 backdrop-blur">
-              <div className="mb-3 inline-flex rounded-full bg-[#071B33] px-4 py-2 text-xs font-semibold text-white">
+            <div className="rounded-[2rem] border border-[#A99BFF]/50 bg-white/80 p-3 shadow-xl shadow-[#111135]/10 backdrop-blur">
+              <div className="mb-3 inline-flex rounded-full bg-[#111135] px-4 py-2 text-xs font-semibold text-white">
                 Best overall match
               </div>
 
@@ -179,10 +179,10 @@ const otherMatches = topResults.slice(1);
           <div>
             <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#B58A34]">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#5B3DF5]">
                   More recommendations
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold text-[#071B33]">
+                <h2 className="mt-2 text-2xl font-semibold text-[#111135]">
                   Other schools to explore
                 </h2>
               </div>

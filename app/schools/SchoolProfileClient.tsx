@@ -41,7 +41,6 @@ type TabKey =
   | "parentGuide"
   | "visitChecklist"
   | "contact"
-  | "reviews";
 
 type SchoolFeeRow = {
   id?: string;
@@ -162,7 +161,7 @@ const profileTabs: { key: TabKey; label: string }[] = [
   { key: "facilities", label: "Facilities" },
   { key: "inspection", label: "Inspection" },
   { key: "parentGuide", label: "Parent Guide" },
-  { key: "reviews", label: "Reviews" },
+  //{ key: "reviews", label: "Reviews" },
   { key: "contact", label: "Contact" },
 ];
 
@@ -177,7 +176,7 @@ const [showLoginModal, setShowLoginModal] = useState(false);
 const dataSource = getDataSource(school.emirate);
 
 useEffect(() => {
-  const key = `heeco_profile_view_${school.id}`;
+  const key = `scoolyx_profile_view_${school.id}`;
 
   if (sessionStorage.getItem(key)) return;
 
@@ -339,7 +338,7 @@ useEffect(() => {
       console.log("Inspection reports:", sortedReports);
 
   return (
-    <main className="min-h-screen bg-[#F8F1E7]">
+    <main className="min-h-screen bg-[#F7F6FF]">
       <LoginRequiredModal
   open={showLoginModal}
   onClose={() => setShowLoginModal(false)}
@@ -347,7 +346,7 @@ useEffect(() => {
   feature="reviews"
   description="Create your free account to read reviews of students , parents and alumini."
 />
-      <section className="relative overflow-hidden bg-[#071B33] px-4 py-14 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-[#111135] px-4 py-14 sm:px-6 lg:px-8">
         {school.heroVideoUrl ? (
           <video
             className="absolute inset-0 h-full w-full object-cover opacity-45"
@@ -369,9 +368,9 @@ useEffect(() => {
           />
         ) : null}
 
-        <div className="absolute inset-0 bg-[#071B33]/72" />
+        <div className="absolute inset-0 bg-[#111135]/45" />
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(214,180,106,0.24),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.18),transparent_34%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(91,61,245,0.35),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(124,87,255,0.22),transparent_34%)]" />
 
         <div className="relative mx-auto max-w-7xl">
           <Button
@@ -387,7 +386,7 @@ useEffect(() => {
 
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-sm font-medium text-[#F5E6C8] backdrop-blur">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-sm font-medium text-[#EDE9FE] backdrop-blur">
                 <School className="h-4 w-4" />
                 School Profile
               </div>
@@ -399,7 +398,7 @@ useEffect(() => {
               <div className="mt-5 flex flex-wrap gap-2">
                 {school.emirate && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white">
-                    <MapPin className="h-4 w-4 text-[#D6B46A]" />
+                    <MapPin className="h-4 w-4 text-bg-white/10" />
                     {school.emirate}
                   </span>
                 )}
@@ -421,10 +420,10 @@ useEffect(() => {
               </p>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-white/10 p-5 text-white shadow-2xl shadow-black/20 backdrop-blur">
+            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 text-white shadow-2xl shadow-black/20 backdrop-blur">
               <p className="text-sm text-slate-300">Fee range</p>
 
-              <p className="mt-2 text-3xl font-semibold text-[#D6B46A]">
+              <p className="mt-2 text-3xl font-semibold text-bg-white/10">
                 {feeRangeText}
               </p>
 
@@ -462,7 +461,7 @@ useEffect(() => {
         </div>
       </section>
 
-      <nav className="sticky top-0  border-b border-[#E8DCC8] bg-[#F8F1E7]/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+      <nav className="sticky top-0  border-b border-slate-100 bg-[#F7F6FF]/95 px-4 backdrop-blur sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl gap-3 overflow-x-auto py-4">
           {profileTabs.map((tab) => {
             const isActive = activeTab === tab.key;
@@ -472,18 +471,18 @@ useEffect(() => {
                 key={tab.key}
                 type="button"
                onClick={() => {
-  if (tab.key == "reviews" && status !== "authenticated") {
-    setShowLoginModal(true);
-    return;
-  }
+  // if (tab.key == "reviews" && status !== "authenticated") {
+  //   setShowLoginModal(true);
+  //   return;
+  // }
 
   setActiveTab(tab.key);
 }}
                 className={[
                   "shrink-0 rounded-full border px-4 py-2 text-sm font-semibold shadow-sm transition",
                   isActive
-                    ? "border-[#071B33] bg-[#071B33] text-white"
-                    : "border-[#D6B46A]/30 bg-white text-[#071B33] hover:bg-[#071B33] hover:text-white",
+                    ? "border-[#111135] bg-[#111135] text-white"
+                    : "border-slate-200 bg-white text-[#111135] hover:bg-[#111135] hover:text-white",
                 ].join(" ")}
               >
                 {tab.label}
@@ -668,11 +667,11 @@ useEffect(() => {
                     {sortedFacilities.map((facility, index) => (
                       <div
                         key={facility.id || `${facility.facilityName}-${index}`}
-                        className="rounded-2xl bg-[#FAF7F0] p-5"
+                        className="rounded-2xl bg-[#F7F6FF] p-5"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
-                            <h3 className="font-semibold text-[#071B33]">
+                            <h3 className="font-semibold text-[#111135]">
                               {facility.facilityName}
                             </h3>
                             {facility.facilityType && (
@@ -813,7 +812,7 @@ useEffect(() => {
       target="_blank"
       rel="noreferrer"
       download={report.reportFileName || undefined}
-      className="inline-flex items-center gap-2 rounded-full bg-[#071B33] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#0B2A4D]"
+      className="inline-flex items-center gap-2 rounded-full bg-[#111135] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#1D1B4F]"
     >
       <Download className="h-4 w-4" />
       Download
@@ -881,9 +880,9 @@ useEffect(() => {
                     {sortedQa.map((item, index) => (
                       <div
                         key={item.id || `${item.question}-${index}`}
-                        className="rounded-2xl bg-[#FAF7F0] p-5"
+                        className="rounded-2xl bg-[#F7F6FF] p-5"
                       >
-                        <h3 className="font-semibold text-[#071B33]">
+                        <h3 className="font-semibold text-[#111135]">
                           {item.question}
                         </h3>
                         <p className="mt-3 text-sm leading-6 text-slate-600">
@@ -938,7 +937,7 @@ useEffect(() => {
     )}`}
     target="_blank"
     rel="noreferrer"
-    className="inline-flex rounded-full bg-[#071B33] px-5 py-3 text-sm font-semibold text-white hover:bg-[#0B2A4D]"
+    className="inline-flex rounded-full bg-[#111135] px-5 py-3 text-sm font-semibold text-white hover:bg-[#1D1B4F]"
     onClick={() =>
   trackMapClick({
     id: school.id,
@@ -951,20 +950,20 @@ useEffect(() => {
 </div>
               </SectionCard>
             )}
-         {activeTab === "reviews" && (
+         {/* {activeTab === "reviews" && (
   <SectionCard
     eyebrow="Reviews"
     title="Parent, Student & Alumni Reviews"
-    description="Verified reviews from the HeecoWorld community."
+    description="Verified reviews from the Scoolyx community."
   >
     <SchoolReviews schoolId={school.id} />
   </SectionCard>
-)}
+)} */}
           </div>
 
           <aside className="space-y-8  lg:top-24 lg:self-start">
-            <div className="rounded-[2rem] border border-white/80 bg-white p-6 shadow-xl shadow-[#071B33]/8">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#B58A34]">
+            <div className="rounded-3xl border border-white/80 bg-white p-6 shadow-xl shadow-violet-500/5">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#5B3DF5]">
                 At a glance
               </p>
 
@@ -987,7 +986,7 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="rounded-[2rem] bg-[#071B33] p-6 text-white shadow-xl shadow-[#071B33]/20">
+            <div className="rounded-3xl bg-[#111135] p-6 text-white shadow-xl shadow-violet-500/15">
               <p className="text-sm text-slate-300">Next step</p>
 
               <h3 className="mt-2 text-2xl font-semibold">
@@ -1014,8 +1013,8 @@ useEffect(() => {
         </div>
       </section>
       {dataSource && (
-  <section className="mt-10 rounded-3xl border border-slate-200 bg-[#FAF7F0] p-6">
-    <h3 className="text-lg font-semibold text-[#071B33]">
+  <section className="mt-10 rounded-3xl border border-slate-200 bg-[#F7F6FF] p-6">
+    <h3 className="text-lg font-semibold text-[#111135]">
       Data Source
     </h3>
 
@@ -1027,7 +1026,7 @@ useEffect(() => {
     </p>
 
     <p className="mt-3 text-sm leading-7 text-slate-600">
-      HeecoWorld is an independent education platform and is not
+      Scoolyx is an independent education platform and is not
       affiliated with, endorsed by, or operated by{" "}
       <strong>{dataSource.authority}</strong>.
     </p>
@@ -1056,12 +1055,12 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[2rem] border border-white/80 bg-white p-6 shadow-xl shadow-[#071B33]/8 sm:p-8">
-      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#B58A34]">
+    <div className="rounded-3xl border border-white/80 bg-white p-6 shadow-xl shadow-violet-500/5 sm:p-8">
+      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#5B3DF5]">
         {eyebrow}
       </p>
 
-      <h2 className="mt-3 text-2xl font-semibold text-[#071B33]">{title}</h2>
+      <h2 className="mt-3 text-2xl font-semibold text-[#111135]">{title}</h2>
 
       {description && (
         <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
@@ -1080,9 +1079,9 @@ function InfoCard({
   value?: string | number | null;
 }) {
   return (
-    <div className="rounded-2xl bg-[#FAF7F0] p-5">
+    <div className="rounded-2xl bg-[#F7F6FF] p-5">
       <p className="text-sm font-medium text-slate-500">{label}</p>
-      <p className="mt-2 text-base font-semibold text-[#071B33]">
+      <p className="mt-2 text-base font-semibold text-[#111135]">
         {value || "Not added by admin"}
       </p>
     </div>
@@ -1100,8 +1099,8 @@ function DataBlock({
 }) {
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200">
-      <div className="bg-[#FAF7F0] px-5 py-4">
-        <h3 className="text-lg font-semibold text-[#071B33]">{title}</h3>
+      <div className="bg-[#F7F6FF] px-5 py-4">
+        <h3 className="text-lg font-semibold text-[#111135]">{title}</h3>
         {description && (
           <p className="mt-1 text-sm text-slate-600">{description}</p>
         )}
@@ -1131,7 +1130,7 @@ function TableCell({
     <td
       className={[
         "px-5 py-4",
-        strong ? "font-semibold text-[#071B33]" : "text-slate-700",
+        strong ? "font-semibold text-[#111135]" : "text-slate-700",
       ].join(" ")}
     >
       {children || "—"}
@@ -1141,13 +1140,13 @@ function TableCell({
 
 function DecisionBox({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-2xl bg-[#FAF7F0] p-5">
-      <h3 className="text-base font-semibold text-[#071B33]">{title}</h3>
+    <div className="rounded-2xl bg-[#F7F6FF] p-5">
+      <h3 className="text-base font-semibold text-[#111135]">{title}</h3>
 
       <div className="mt-4 space-y-3">
         {items.map((item) => (
           <div key={item} className="flex items-start gap-3">
-            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#B58A34]" />
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#5B3DF5]" />
             <p className="text-sm leading-6 text-slate-700">{item}</p>
           </div>
         ))}
@@ -1166,14 +1165,14 @@ function ListBlock({
   emptyMessage: string;
 }) {
   return (
-    <div className="mt-8 rounded-2xl bg-[#FAF7F0] p-5">
-      <h3 className="text-lg font-semibold text-[#071B33]">{title}</h3>
+    <div className="mt-8 rounded-2xl bg-[#F7F6FF] p-5">
+      <h3 className="text-lg font-semibold text-[#111135]">{title}</h3>
 
       {items.length > 0 ? (
         <div className="mt-4 space-y-3">
           {items.map((item) => (
             <div key={item} className="flex items-start gap-3">
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#B58A34]" />
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#5B3DF5]" />
               <p className="text-sm leading-6 text-slate-700">{item}</p>
             </div>
           ))}
@@ -1193,7 +1192,7 @@ function EmptyState({ message }: { message: string }) {
 
 function StatusPill({ label }: { label: string }) {
   return (
-    <span className="inline-flex rounded-full bg-[#FAF7F0] px-3 py-1 text-xs font-semibold text-[#071B33]">
+    <span className="inline-flex rounded-full bg-[#F7F6FF] px-3 py-1 text-xs font-semibold text-[#111135]">
       {label}
     </span>
   );
@@ -1209,7 +1208,7 @@ function SidebarFact({
   return (
     <div>
       <p className="text-xs font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[#071B33]">
+      <p className="mt-1 text-sm font-semibold text-[#111135]">
         {value || "Not added"}
       </p>
     </div>
@@ -1235,14 +1234,14 @@ function ContactCard({
     );
 
   const content = (
-    <div className="rounded-2xl bg-[#FAF7F0] p-5 transition hover:bg-[#F3E8D4]">
+    <div className="rounded-2xl bg-[#F7F6FF] p-5 transition hover:bg-[#F1EEFF]">
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 text-[#B58A34]">{icon}</div>
+        <div className="mt-0.5 text-[#5B3DF5]">{icon}</div>
         <div>
           <p className="text-sm font-medium text-slate-500">
             {contact.label || contact.type}
           </p>
-          <p className="mt-1 break-words text-base font-semibold text-[#071B33]">
+          <p className="mt-1 break-words text-base font-semibold text-[#111135]">
             {contact.value}
           </p>
         </div>
@@ -1253,26 +1252,28 @@ function ContactCard({
   if (contact.href) {
     return (
       <a
-  href={contact.href}
-  target="_blank"
-  rel="noreferrer"
-  onClick={() => {
-    switch (contact.type) {
-      case "website":
-        trackWebsiteClick(school);
-        break;
+        href={contact.href}
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => {
+          switch (contact.type) {
+            case "website":
+              trackWebsiteClick(school);
+              break;
 
-      case "phone":
-      case "whatsapp":
-        trackPhoneClick(school);
-        break;
+            case "phone":
+            case "whatsapp":
+              trackPhoneClick(school);
+              break;
 
-      case "email":
-        trackEmailClick(school);
-        break;
-    }
-  }}
-></a>
+            case "email":
+              trackEmailClick(school);
+              break;
+          }
+        }}
+      >
+        {content}
+      </a>
     );
   }
 

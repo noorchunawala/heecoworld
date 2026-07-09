@@ -11,6 +11,7 @@ export default function NewSchoolPage() {
   const [slug, setSlug] = useState("");
   const [emirate, setEmirate] = useState("");
   const [area, setArea] = useState("");
+  const [schoolAdminEmail, setSchoolAdminEmail] = useState("");
   const [saving, setSaving] = useState(false);
 
   function generateSlug(value: string) {
@@ -32,60 +33,64 @@ export default function NewSchoolPage() {
       return;
     }
 
+    if (!schoolAdminEmail.trim()) {
+      alert("School admin email is required.");
+      return;
+    }
+
     setSaving(true);
 
-    const { data, error } = await supabase
-      .from("listings")
-      .insert({
-        name: name.trim(),
-        slug: slug.trim(),
-        emirate: emirate.trim() || null,
-        area: area.trim() || null,
-        status: "draft",
-        type: "school",
-      })
-      .select("id")
-      .single();
+    const { data: sessionData } = await supabase.auth.getSession();
 
-    if (error) {
-      alert(error.message);
+    if (!sessionData.session?.access_token) {
+      alert("Your admin session has expired. Please log in again.");
+      router.replace("/admin/login");
       setSaving(false);
       return;
     }
 
-    const schoolId = data.id;
-
-    await supabase.from("school_profiles").insert({
-      listing_id: schoolId,
-      curricula: [],
-      grades: [],
-      priorities: [],
-      facilities: [],
+    const response = await fetch("/api/admin/schools", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionData.session.access_token}`,
+      },
+      body: JSON.stringify({
+        name,
+        slug,
+        emirate,
+        area,
+        schoolAdminEmail,
+      }),
     });
 
-    await supabase.from("school_profile_details").insert({
-      listing_id: schoolId,
-      updated_at: new Date().toISOString(),
-    });
+    const result = await response.json().catch(() => null);
 
-   router.push(`/admin/schools/${schoolId}`);
+    if (!response.ok) {
+      alert(result?.error || "Could not create school.");
+      setSaving(false);
+      return;
+    }
+
+    router.push(`/admin/schools/${result.id}`);
   }
 
   return (
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="mx-auto max-w-3xl rounded-3xl bg-white p-8 shadow-sm">
         <h1 className="text-3xl font-bold">Add New School</h1>
+
         <p className="mt-2 text-slate-500">
-          Create a draft school listing, then complete the full profile.
+          Create the school listing and assign its first school admin.
         </p>
 
         <div className="mt-8 grid gap-4">
           <Input
             label="School Name"
             value={name}
-            onChange={(v) => {
-              setName(v);
-              setSlug(generateSlug(v));
+            onChange={(value) => {
+              setName(value);
+              setSlug(generateSlug(value));
             }}
           />
 
@@ -94,6 +99,18 @@ export default function NewSchoolPage() {
           <Input label="Emirate" value={emirate} onChange={setEmirate} />
 
           <Input label="Area" value={area} onChange={setArea} />
+
+          <Input
+            label="School Admin Email"
+            type="email"
+            value={schoolAdminEmail}
+            onChange={setSchoolAdminEmail}
+          />
+
+          <p className="-mt-2 text-sm text-slate-500">
+            This email will become the school admin after they sign up using
+            the same email address.
+          </p>
 
           <button
             onClick={createSchool}
@@ -112,15 +129,19 @@ function Input({
   label,
   value,
   onChange,
+  type = "text",
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  type?: string;
 }) {
   return (
     <div>
       <label className="text-sm font-semibold text-slate-700">{label}</label>
+
       <input
+        type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="mt-2 w-full rounded-2xl border bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"

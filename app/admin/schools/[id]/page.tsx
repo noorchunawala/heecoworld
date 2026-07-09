@@ -989,23 +989,27 @@ const inspectionReportsPayload = await Promise.all(
   inspectionRows
     .filter((row) => row.academicYear.trim())
     .map(async (row, index) => {
-      let reportPdfPath = row.reportPdfPath || null;
+   let reportPdfPath = row.reportPdfPath || null;
+let reportFileName = nullIfEmpty(row.reportFileName);
 
-      if (row.pdfFile) {
-        reportPdfPath = await uploadInspectionReport(
-          row.pdfFile,
-          form.slug.trim(),
-          row.academicYear.trim()
-        );
-      }
+if (row.pdfFile) {
+  const uploaded = await uploadInspectionReport(
+    row.pdfFile,
+    schoolId,
+    row.academicYear.trim()
+  );
 
-      return {
-        listing_id: schoolId,
-        academic_year: row.academicYear.trim(),
-        overall_rating: nullIfEmpty(row.overallRating),
-        inspection_authority: nullIfEmpty(row.inspectionAuthority),
-        report_file_name: nullIfEmpty(row.reportFileName),
-        report_pdf_path: reportPdfPath,
+  reportPdfPath = uploaded.filePath;
+  reportFileName = uploaded.fileName;
+}
+
+return {
+  listing_id: schoolId,
+  academic_year: row.academicYear.trim(),
+  overall_rating: nullIfEmpty(row.overallRating),
+  inspection_authority: nullIfEmpty(row.inspectionAuthority),
+  report_file_name: reportFileName,
+  report_pdf_path: reportPdfPath,
         notes: nullIfEmpty(row.notes),
         sort_order: orderNumber(row.sortOrder, index),
       };
@@ -1103,7 +1107,9 @@ if (parentGuidesPayload.length > 0) {
           </div>
         </div>
 
-        <Section title="Basic Information">
+       {schoolId && <SchoolAdminAccess schoolId={schoolId} />}
+
+<Section title="Basic Information">
           <div className="grid md:grid-cols-2 gap-4">
             <Input
               label="School Name"
@@ -2027,19 +2033,406 @@ if (parentGuidesPayload.length > 0) {
     </main>
   );
 }
-async function uploadInspectionReport(file: File, schoolSlug: string, year: string) {
-  const filePath = `${schoolSlug}/${year}-${Date.now()}.pdf`;
+async function uploadInspectionReport(
+  file: File,
+  schoolId: string,
+  academicYear: string
+) {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const accessToken = sessionData.session?.access_token;
 
-  const { error } = await supabase.storage
-    .from("inspection-reports")
-    .upload(filePath, file, {
-      contentType: "application/pdf",
-      upsert: true,
-    });
+  if (!accessToken) {
+    throw new Error("Your session has expired. Please sign in again.");
+  }
 
-  if (error) throw error;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("academicYear", academicYear);
 
-  return filePath;
+  const response = await fetch(
+    `/api/school-portal/schools/${schoolId}/inspection-reports/upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    }
+  );
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(result?.error || "Could not upload inspection PDF.");
+  }
+
+  return {
+    filePath: String(result.filePath || ""),
+    fileName: String(result.fileName || ""),
+  };
+}
+type SchoolAdminAccessRow = {
+  id: string;
+  full_name: string | null;
+  email: string;
+  role: "school_admin";
+  status: "invited" | "active" | "suspended";
+  user_id: string | null;
+  accepted_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+function SchoolAdminAccess({ schoolId }: { schoolId: string }) {
+  const [admins, setAdmins] = useState<SchoolAdminAccessRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [actionId, setActionId] = useState<string | null>(null);
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+
+  async function getAccessToken() {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+
+    if (!accessToken) {
+      throw new Error("Your session has expired. Please sign in again.");
+    }
+
+    return accessToken;
+  }
+
+  async function loadAdmins() {
+    try {
+      setLoading(true);
+
+      const accessToken = await getAccessToken();
+
+      const response = await fetch(
+        `/api/admin/schools/${schoolId}/admin`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error || "Could not load school administrator access."
+        );
+      }
+
+      setAdmins(Array.isArray(result?.admins) ? result.admins : []);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Could not load school administrator access."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadAdmins();
+  }, [schoolId]);
+
+  async function inviteAdmin() {
+    const cleanedEmail = email.trim().toLowerCase();
+
+    if (!cleanedEmail) {
+      alert("Enter the school administrator email.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const accessToken = await getAccessToken();
+
+      const response = await fetch(
+        `/api/admin/schools/${schoolId}/admin`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName: fullName.trim(),
+            email: cleanedEmail,
+          }),
+        }
+      );
+
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error || "Could not invite this school administrator."
+        );
+      }
+
+      setFullName("");
+      setEmail("");
+
+      alert(
+        result?.message ||
+          "School administrator access was created successfully."
+      );
+
+      await loadAdmins();
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Could not invite this school administrator."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function updateAdmin(
+    membershipId: string,
+    action: "deactivate" | "reinvite"
+  ) {
+    const actionLabel =
+      action === "deactivate"
+        ? "deactivate this school administrator"
+        : "re-invite this school administrator";
+
+    if (!window.confirm(`Are you sure you want to ${actionLabel}?`)) {
+      return;
+    }
+
+    try {
+      setActionId(membershipId);
+
+      const accessToken = await getAccessToken();
+
+      const response = await fetch(
+        `/api/admin/schools/${schoolId}/admin`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            membershipId,
+            action,
+          }),
+        }
+      );
+
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error || "Could not update school administrator access."
+        );
+      }
+
+      alert(
+        result?.message || "School administrator access was updated."
+      );
+
+      await loadAdmins();
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Could not update school administrator access."
+      );
+    } finally {
+      setActionId(null);
+    }
+  }
+
+  return (
+    <Section title="School Admin Access">
+      <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+        <p className="text-sm font-semibold text-slate-900">
+          Create school admin access
+        </p>
+
+        <p className="mt-1 text-sm text-slate-600">
+          This creates a school-dashboard access record. Share the School Access
+page with the administrator so they can sign in and activate access using
+this email.
+        </p>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-600">
+              Full Name
+            </label>
+
+            <input
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+              placeholder="For example, Sarah Khan"
+              className="mt-1 w-full rounded-xl border bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600">
+              School Email
+            </label>
+
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="name@school.ae"
+              className="mt-1 w-full rounded-xl border bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="flex items-end">
+            <button
+              type="button"
+              onClick={inviteAdmin}
+              disabled={submitting}
+              className="w-full rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+            >
+              {submitting ? "Creating..." : "Create Admin Access"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <p className="text-sm text-slate-500">
+          Loading school administrator access...
+        </p>
+      ) : admins.length === 0 ? (
+        <EmptyEditorText text="No school administrators have been added yet." />
+      ) : (
+        <div className="overflow-hidden rounded-2xl border">
+          <div className="hidden grid-cols-[1.3fr_1.6fr_0.8fr_1fr] gap-4 bg-slate-50 px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 md:grid">
+            <span>Administrator</span>
+            <span>Email</span>
+            <span>Status</span>
+            <span className="text-right">Actions</span>
+          </div>
+
+          <div className="divide-y">
+            {admins.map((admin) => {
+              const isWorking = actionId === admin.id;
+
+              return (
+                <div
+                  key={admin.id}
+                  className="grid gap-3 px-4 py-4 md:grid-cols-[1.3fr_1.6fr_0.8fr_1fr] md:items-center md:gap-4"
+                >
+                  <div>
+                    <p className="font-semibold text-slate-900">
+                      {admin.full_name || "No name added"}
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-500">
+                      Added {formatAccessDate(admin.created_at)}
+                    </p>
+                  </div>
+
+                  <p className="break-all text-sm text-slate-700">
+                    {admin.email}
+                  </p>
+
+                  <div>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${schoolAdminStatusClass(
+                        admin.status
+                      )}`}
+                    >
+                      {schoolAdminStatusLabel(admin.status)}
+                    </span>
+
+                    {admin.status === "active" && admin.accepted_at && (
+                      <p className="mt-1 text-xs text-slate-500">
+                        Activated {formatAccessDate(admin.accepted_at)}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex justify-start gap-2 md:justify-end">
+                    {admin.status === "active" && (
+                      <button
+                        type="button"
+                        disabled={isWorking}
+                        onClick={() => updateAdmin(admin.id, "deactivate")}
+                        className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-60"
+                      >
+                        {isWorking ? "Updating..." : "Deactivate"}
+                      </button>
+                    )}
+
+                    {(admin.status === "suspended" ||
+                      admin.status === "invited") && (
+                      <button
+                        type="button"
+                        disabled={isWorking}
+                        onClick={() => updateAdmin(admin.id, "reinvite")}
+                        className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 disabled:opacity-60"
+                      >
+                       {isWorking ? "Updating..." : "Reset Activation"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+function schoolAdminStatusLabel(
+  status: SchoolAdminAccessRow["status"]
+) {
+  if (status === "active") return "Active";
+  if (status === "invited") return "Awaiting activation";
+  return "Access suspended";
+}
+
+function schoolAdminStatusClass(
+  status: SchoolAdminAccessRow["status"]
+) {
+  if (status === "active") {
+    return "bg-emerald-100 text-emerald-700";
+  }
+
+  if (status === "invited") {
+    return "bg-amber-100 text-amber-700";
+  }
+
+  return "bg-slate-200 text-slate-700";
+}
+
+function formatAccessDate(value: string | null) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
+
+  return date.toLocaleDateString("en-AE", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function Section({

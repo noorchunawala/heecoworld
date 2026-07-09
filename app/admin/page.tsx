@@ -81,7 +81,18 @@ export default function AdminPage() {
         router.push("/admin/login");
         return;
       }
+const adminCheck = await fetch("/api/admin/auth", {
+  headers: {
+    Authorization: `Bearer ${sessionData.session.access_token}`,
+  },
+  cache: "no-store",
+});
 
+if (!adminCheck.ok) {
+  alert("This account is not allowed to access HeecoWorld Admin.");
+  router.replace("/");
+  return;
+}
       const [
         enquiriesResult,
         tourRequestsResult,

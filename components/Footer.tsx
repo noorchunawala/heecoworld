@@ -1,9 +1,9 @@
 import Link from "next/link";
 import {
-  CalendarDays,
-  Factory,
+  BarChart3,
+  BookOpen,
   GitCompare,
-  Heart,
+  GraduationCap,
   Mail,
   MapPin,
   School,
@@ -13,108 +13,68 @@ import {
 
 const productLinks = [
   { label: "Home", href: "/" },
+  { label: "Learning", href: "/my-learning" },
   { label: "Schools", href: "/schools" },
-  { label: "Heeco Match™", href: "/heeco-match" },
+  { label: "Scoolyx Match", href: "/heeco-match" },
   { label: "Compare Schools", href: "/compare" },
-  { label: "Book School Tour", href: "#" },
-  { label: "List Your School", href: "/for-schools" },
+  { label: "For Schools", href: "/for-schools" },
 ];
 
-const verticalLinks = [
-  { label: "Educational Experiences", href: "/industrial-visits" },
-  { label: "Partner with HeecoWorld", href: "/for-schools" },
-  { label: "School Directory", href: "/schools" },
+const learningLinks = [
+  { label: "Practice Tests", href: "/my-learning", icon: BookOpen },
+  { label: "Progress Reports", href: "/my-learning/progress", icon: BarChart3 },
+  { label: "School Assessments", href: "/my-learning", icon: GraduationCap },
 ];
 
-const featureLinks = [
-  {
-    label: "Discover schools",
-    href: "/schools",
-    icon: Search,
-  },
-  {
-    label: "Heeco Match™",
-    href: "/heeco-match",
-    icon: Sparkles,
-  },
-  {
-    label: "Compare schools",
-    href: "/compare",
-    icon: GitCompare,
-  },
-  {
-    label: "Request school tours",
-    href: "#",
-    icon: CalendarDays,
-  },
-  {
-    label: "Educational experiences",
-    href: "/industrial-visits",
-    icon: Factory,
-  },
+const schoolLinks = [
+  { label: "Search Schools", href: "/schools", icon: Search },
+  { label: "Scoolyx Match", href: "/heeco-match", icon: Sparkles },
+  { label: "Compare Schools", href: "/compare", icon: GitCompare },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#E8DCC6] bg-[#071B33] text-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1fr]">
+    <footer className="border-t border-slate-100 bg-[#111135] text-white">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_0.7fr_1fr_1fr]">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#D6B46A] font-bold text-[#071B33]">
-                H
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#5B3DF5] to-[#7357FF] text-lg font-black text-white shadow-lg shadow-violet-500/25">
+                S
               </div>
 
               <div>
-                <h2 className="text-xl font-bold tracking-tight">
-                  HEECO
+                <h2 className="text-xl font-black tracking-tight">
+                  Scoolyx
                 </h2>
-                <p className="text-sm text-slate-300">
-                  Hub of Experiential Education
+                <p className="text-sm text-slate-400">
+                  Learn. Assess. Progress.
                 </p>
               </div>
             </Link>
 
-            <p className="mt-5 max-w-sm text-sm leading-7 text-slate-300">
-              Helping UAE families discover, compare and confidently choose the right school.
-
-HEECO combines intelligent school discovery, Heeco Match™, school comparisons, tour requests and educational experiences into one trusted platform.
+            <p className="mt-6 max-w-sm text-sm leading-7 text-slate-300">
+              Smarter learning for parents and students. Create practice tests,
+              track progress, stay connected with school assessments and explore
+              the right schools with confidence.
             </p>
 
-            <p className="mt-4 text-sm leading-7 text-[#F5E6C8]" dir="rtl">
-              اكتشف وقارن واختر المدرسة المناسبة لطفلك بكل ثقة
-            </p>
+            <div className="mt-6 inline-flex rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-[#DCD7FF]">
+              Smarter Learning. Better Tomorrow.
+            </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#D6B46A]">
-              Product
+            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-[#A99BFF]">
+              Platform
             </h3>
 
             <div className="mt-5 grid gap-3">
               {productLinks.map((link) => (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-slate-300 transition hover:text-[#D6B46A]"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#D6B46A]">
-              Solutions
-            </h3>
-
-            <div className="mt-5 grid gap-3">
-              {verticalLinks.map((link) => (
-                <Link
                   key={`${link.href}-${link.label}`}
                   href={link.href}
-                  className="text-sm text-slate-300 transition hover:text-[#D6B46A]"
+                  className="text-sm font-medium text-slate-300 transition hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -123,56 +83,87 @@ HEECO combines intelligent school discovery, Heeco Match™, school comparisons,
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[#D6B46A]">
-              Platform features
+            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-[#A99BFF]">
+              Learning
             </h3>
 
             <div className="mt-5 grid gap-3">
-              {featureLinks.map((item) => {
+              {learningLinks.map((item) => {
                 const Icon = item.icon;
 
                 return (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="flex items-center gap-3 rounded-2xl bg-white/5 px-4 py-3 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                    className="flex items-center gap-3 rounded-2xl bg-white/[0.06] px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/[0.10] hover:text-white"
                   >
-                    <Icon className="h-4 w-4 text-[#D6B46A]" />
+                    <Icon className="h-4 w-4 text-[#A99BFF]" />
                     {item.label}
                   </Link>
                 );
               })}
             </div>
           </div>
+
+          <div>
+            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-[#A99BFF]">
+              Schools
+            </h3>
+
+            <div className="mt-5 grid gap-3">
+              {schoolLinks.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="flex items-center gap-3 rounded-2xl bg-white/[0.06] px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/[0.10] hover:text-white"
+                  >
+                    <Icon className="h-4 w-4 text-[#A99BFF]" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <Link
+              href="/for-schools"
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-[#111135] transition hover:bg-[#F1EEFF]"
+            >
+              <School className="h-4 w-4" />
+              School Portal
+            </Link>
+          </div>
         </div>
 
         <div className="mt-12 grid gap-6 border-t border-white/10 pt-8 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div className="flex flex-col gap-3 text-sm text-slate-300 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="flex flex-col gap-3 text-sm text-slate-400 sm:flex-row sm:flex-wrap sm:items-center">
             <span className="inline-flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-[#D6B46A]" />
+              <MapPin className="h-4 w-4 text-[#A99BFF]" />
               United Arab Emirates
             </span>
 
-            <span className="hidden text-slate-600 sm:inline">•</span>
+            <span className="hidden text-slate-700 sm:inline">•</span>
 
             <span className="inline-flex items-center gap-2">
-              <School className="h-4 w-4 text-[#D6B46A]" />
-              Built for UAE families, schools and education partners
+              <School className="h-4 w-4 text-[#A99BFF]" />
+              Built for UAE families, learners and schools
             </span>
 
-            <span className="hidden text-slate-600 sm:inline">•</span>
+            <span className="hidden text-slate-700 sm:inline">•</span>
 
-           <a
-  href="mailto:info@heecoworld.com"
-  className="inline-flex items-center gap-2 hover:text-[#D6B46A]"
->
-  <Mail className="h-4 w-4 text-[#D6B46A]" />
-  info@heecoworld.com
-</a>
+            <a
+              href="mailto:info@heecoworld.com"
+              className="inline-flex items-center gap-2 transition hover:text-white"
+            >
+              <Mail className="h-4 w-4 text-[#A99BFF]" />
+              info@heecoworld.com
+            </a>
           </div>
 
-          <p className="text-sm text-slate-400">
-            © {new Date().getFullYear()} HeecoWorld. All rights reserved.
+          <p className="text-sm text-slate-500">
+            © {new Date().getFullYear()} Scoolyx. All rights reserved.
           </p>
         </div>
       </div>

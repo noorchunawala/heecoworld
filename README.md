@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HeecoWorld — Learner Access, Progress, Search & Assessment-Code Patch
 
-## Getting Started
+## Use this patch instead of the earlier learner patch
 
-First, run the development server:
+This package includes the learner features from the previous patch **plus** the missing teacher assessment-code flow.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Copy into project root
+
+Extract the ZIP into `C:\heecoworld` and allow files to replace existing files.
+
+It replaces these existing files:
+
+```text
+app/my-learning/page.tsx
+app/my-learning/assessments/[testId]/page.tsx
+app/school-dashboard/schools/[schoolId]/assessments/page.tsx
+app/school-dashboard/schools/[schoolId]/assessments/[testId]/page.tsx
+app/api/learner-assessments/route.ts
+app/api/learner-assessments/[testId]/route.ts
+app/api/learner-assessments/[testId]/start/route.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+It also adds:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+app/my-learning/progress/page.tsx
+app/api/school-portal/assessments/[testId]/access-code/route.ts
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## What changed
 
-## Learn More
+- Matching learners still see relevant tests automatically.
+- Learners search/filter available tests and have separate **Available tests**, **Completed**, and **Progress** views.
+- A learner must enter the assessment code only when starting the first attempt.
+- Teachers see the assessment code immediately after publishing in the test editor, with a **Copy code** button.
+- Teachers and school admins can open **Assessment code** from the published-test dashboard and copy it. The route verifies active school membership and the test's school before returning the code.
+- No public assessment URL is used or displayed.
 
-To learn more about Next.js, take a look at the following resources:
+## Required prior file
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This patch uses the results-access helper already installed by the teacher/school-admin results bundle:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+lib/schoolAssessmentResultsAccess.ts
+```
 
-## Deploy on Vercel
+## Build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## QA checklist
+
+1. Publish a draft test as its teacher. Confirm the editor shows **Assessment code** immediately.
+2. Refresh the editor. Confirm the same code remains visible.
+3. Return to **My Assessments**. On the published test, click **Assessment code**, then **Copy**.
+4. As school admin, open the school assessment workspace and confirm the published test can also reveal its code.
+5. As matching learner, confirm the card stays visible in **Available tests**.
+6. Press **Start assessment**. Wrong code must fail; correct code must start the one permitted attempt.
+7. Refresh midway and confirm Resume works. Submit and confirm the card moves to **Completed** and appears in **Progress**.

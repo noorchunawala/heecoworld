@@ -10,6 +10,20 @@
 !.yarn/releases
 !.yarn/versions
 
+# local env files
+.env
+.env.local
+.env.*.local
+
+# private curriculum PDFs / generated JSON
+scoolyx-private-pdfs/
+
+# one-time ingestion/generation scripts
+scripts/
+
+# logs
+*.log
+
 # testing
 /coverage
 

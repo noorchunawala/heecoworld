@@ -45,7 +45,7 @@ type Listing = {
   emirate?: string;
 };
 
-export default function ListingAnalyticsDemoClient({
+export default function SchoolOverviewAnalytics({
   listing,
   analytics,
 }: {
