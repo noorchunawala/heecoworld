@@ -11,7 +11,7 @@ export default function TermsPage() {
         </p>
 
         <h2 className="mt-8 text-xl font-semibold text-[#111135]">
-          Information we collect
+          Information we collect is sample
         </h2>
         <p className="mt-3 text-gray-600">
           We may collect account details, learner profile details, school
