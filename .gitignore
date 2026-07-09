@@ -10,6 +10,12 @@
 !.yarn/releases
 !.yarn/versions
 
+# generated/local curriculum files
+final_curriculum_map.json
+
+# local patch folders
+teacher-results-analytics-patch/
+
 # local env files
 .env
 .env.local
