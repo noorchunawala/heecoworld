@@ -167,10 +167,7 @@ const subjects = catalog.map((document) => ({
         : section.topic_name_exact,
       questionCount: section.questionCount,
     }));
-console.log(
-  "Practice subjects returned:",
-  subjects.map((subject) => subject.name)
-);
+
     return {
       id: chapter.id,
       name: chapter.chapter_number
@@ -184,7 +181,10 @@ console.log(
     };
   }),
 }));
-
+console.log(
+  "Practice subjects returned:",
+  subjects.map((subject) => subject.name)
+);
     return NextResponse.json({
       learner: {
         id: learner.id,
@@ -200,9 +200,16 @@ console.log(
       ],
     });
   } catch (error) {
+    const message =
+      error instanceof Error ? error.message : JSON.stringify(error);
+
     console.error("Unexpected practice create-options error:", error);
+
     return NextResponse.json(
-      { error: "Something went wrong while loading practice test options." },
+      {
+        error: "Something went wrong while loading practice test options.",
+        message,
+      },
       { status: 500 }
     );
   }
