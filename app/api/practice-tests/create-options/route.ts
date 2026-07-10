@@ -25,6 +25,7 @@ type CatalogDocumentRow = {
   id: string;
   curriculum_id: string;
   curriculum_level_id: string | null;
+    textbook_name: string | null;
   subject: string;
   processing_status: string;
   curriculum_chapters: CurriculumChapterRow[];
@@ -49,19 +50,38 @@ export async function GET(request: NextRequest) {
 
     const learner = learnerAccess.learner;
 
-    const { data: questionRows, error: questionError } = await supabaseAdmin
-      .from("question_bank")
-      .select("id, curriculum_section_id")
-      .eq("is_active", true)
-      .eq("publication_status", "published");
+   const questionRows: { id: string; curriculum_section_id: string | null }[] = [];
 
-    if (questionError) {
-      console.error("Practice options question lookup error:", questionError);
-      return NextResponse.json(
-        { error: "Could not load practice test options.", message: questionError.message },
-        { status: 500 }
-      );
-    }
+let from = 0;
+const pageSize = 1000;
+
+while (true) {
+  const { data: page, error: questionError } = await supabaseAdmin
+    .from("question_bank")
+    .select("id, curriculum_section_id")
+    .eq("is_active", true)
+    .eq("publication_status", "published")
+    .range(from, from + pageSize - 1);
+
+  if (questionError) {
+    console.error("Practice options question lookup error:", questionError);
+    return NextResponse.json(
+      {
+        error: "Could not load practice test options.",
+        message: questionError.message,
+      },
+      { status: 500 }
+    );
+  }
+
+  questionRows.push(...(page || []));
+
+  if (!page || page.length < pageSize) break;
+
+  from += pageSize;
+  
+}
+  
 
     const sectionQuestionCounts = new Map<string, number>();
 
@@ -81,6 +101,7 @@ export async function GET(request: NextRequest) {
         curriculum_id,
         curriculum_level_id,
         subject,
+        textbook_name,
         processing_status,
         curriculum_chapters (
           id,
@@ -133,8 +154,11 @@ export async function GET(request: NextRequest) {
       .filter((document) => document.curriculum_chapters.length > 0);
 
 const subjects = catalog.map((document) => ({
-  id: document.subject,
-  name: document.subject,
+  id: document.id,
+  name:
+    document.subject === "English" || document.subject === "Hindi"
+      ? `${document.subject} - ${document.textbook_name || "Textbook"}`
+      : document.subject,
   chapters: document.curriculum_chapters.map((chapter) => {
     const topics = chapter.curriculum_sections.map((section: any) => ({
       id: section.id,
@@ -143,7 +167,10 @@ const subjects = catalog.map((document) => ({
         : section.topic_name_exact,
       questionCount: section.questionCount,
     }));
-
+console.log(
+  "Practice subjects returned:",
+  subjects.map((subject) => subject.name)
+);
     return {
       id: chapter.id,
       name: chapter.chapter_number
