@@ -328,8 +328,12 @@ export default function CompleteProfilePage() {
 
       <div className="relative mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
         <aside className="rounded-[2rem] border border-white/80 bg-white/85 p-6 shadow-2xl shadow-violet-500/10 backdrop-blur lg:sticky lg:top-24">
-          <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-[#111135] text-xl font-black text-white">
-            S
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl white text-2xl font-black text-white shadow-xl shadow-slate-900/10">
+             <img
+    src="/favicon-32x32.png"
+    alt="Scoolyx"
+    className="h-12 w-auto"
+  />
           </div>
 
           <p className="mt-6 text-sm font-black uppercase tracking-[0.18em] text-[#5B3DF5]">

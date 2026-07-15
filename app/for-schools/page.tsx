@@ -71,10 +71,7 @@ export default function ForSchoolsPage() {
 
         <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-sm font-bold text-[#5B3DF5] shadow-sm backdrop-blur">
-              <School className="h-4 w-4" />
-              Scoolyx for Schools
-            </div>
+           
 
             <h1 className="max-w-4xl text-5xl font-black leading-tight tracking-[-0.045em] sm:text-6xl">
               Modern assessment platform for schools.

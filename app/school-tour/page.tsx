@@ -309,7 +309,7 @@ setFormData(initialFormData);
     <p className="mt-3 text-sm leading-6 text-slate-600">
       If you do not hear back within 3 working days, please contact us at{" "}
       <span className="font-semibold text-[#071B33]">
-        info@heecoworld.com
+        info@scoolyx.com
       </span>.
     </p>
 

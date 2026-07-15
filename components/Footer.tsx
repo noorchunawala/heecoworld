@@ -39,18 +39,11 @@ export default function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.7fr_1fr_1fr]">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#5B3DF5] to-[#7357FF] text-lg font-black text-white shadow-lg shadow-violet-500/25">
-                S
-              </div>
-
-              <div>
-                <h2 className="text-xl font-black tracking-tight">
-                  Scoolyx
-                </h2>
-                <p className="text-sm text-slate-400">
-                  Learn. Assess. Progress.
-                </p>
-              </div>
+              <img
+    src="/Footerlogo.png"
+    alt="Scoolyx"
+    className="h-12 w-auto"
+  />
             </Link>
 
             <p className="mt-6 max-w-sm text-sm leading-7 text-slate-300">
@@ -146,19 +139,16 @@ export default function Footer() {
 
             <span className="hidden text-slate-700 sm:inline">•</span>
 
-            <span className="inline-flex items-center gap-2">
-              <School className="h-4 w-4 text-[#A99BFF]" />
-              Built for UAE families, learners and schools
-            </span>
+           
 
             <span className="hidden text-slate-700 sm:inline">•</span>
 
             <a
-              href="mailto:info@heecoworld.com"
+              href="mailto:info@scoolyx.com"
               className="inline-flex items-center gap-2 transition hover:text-white"
             >
               <Mail className="h-4 w-4 text-[#A99BFF]" />
-              info@heecoworld.com
+              info@scoolyx.com
             </a>
           </div>
 

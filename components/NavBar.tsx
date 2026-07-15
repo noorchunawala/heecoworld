@@ -19,6 +19,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const { status } = useAuth();
   const { openAccount } = useUI();
+ 
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -29,20 +30,13 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur-xl">
       <Container>
         <div className="flex h-20 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#5B3DF5] to-[#7357FF] text-lg font-black text-white shadow-lg shadow-violet-500/20">
-              S
-            </div>
-
-            <div>
-              <h1 className="text-xl font-black tracking-tight text-[#111135]">
-                Scoolyx
-              </h1>
-              <p className="text-xs font-medium text-slate-500">
-                Learn. Assess. Progress.
-              </p>
-            </div>
-          </Link>
+        <Link href="/" className="flex items-center">
+  <img
+    src="/logo.png"
+    alt="Scoolyx"
+    className="h-12 w-auto"
+  />
+</Link>
 
           <nav className="hidden items-center gap-2 rounded-full bg-slate-50 p-1 text-sm font-bold lg:flex">
             {navLinks.map((link) => {

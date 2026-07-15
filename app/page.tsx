@@ -39,13 +39,13 @@ export default function HomePage() {
     <main className="min-h-screen bg-white text-[#101044]">
       <section className="relative overflow-hidden bg-[#F7F6FF]">
         <div className="absolute inset-0">
-          <Image
-            src="/images/scoolyx-hero-clean.png"
-            alt="Student learning with Scoolyx"
-            fill
-            priority
-            className="object-cover object-center"
-          />
+         <Image
+  src="/images/scoolyx-hero-clean.png"
+  alt="Student learning with Scoolyx"
+  fill
+  priority
+  className="object-cover object-[80%_center] md:object-center"
+/>
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/10" />
         </div>
 
@@ -67,7 +67,7 @@ export default function HomePage() {
             <div className="mt-9 flex flex-wrap gap-5 text-sm font-semibold text-[#33316B]">
               {[
                 ["Curriculum aligned", BookOpen],
-                ["First tests free", CheckCircle2],
+                ["Unlimited free Practice Test", CheckCircle2],
                 ["Track learning progress", BarChart3],
               ].map(([label, Icon]: any) => (
                 <div key={label} className="flex items-center gap-3">

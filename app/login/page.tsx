@@ -60,8 +60,12 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl bg-[#111135] text-2xl font-black text-white shadow-xl shadow-slate-900/10">
-            S
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl white text-2xl font-black text-white shadow-xl shadow-slate-900/10">
+             <img
+    src="/favicon-32x32.png"
+    alt="Scoolyx"
+    className="h-12 w-auto"
+  />
           </div>
 
           <h1 className="text-4xl font-black tracking-[-0.035em] text-[#111135]">

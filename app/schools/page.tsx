@@ -83,10 +83,7 @@ export default function SchoolsPage() {
 
         <div className="relative mx-auto max-w-7xl">
           <div className="max-w-3xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-sm font-bold text-[#5B3DF5] shadow-sm backdrop-blur">
-              <School className="h-4 w-4" />
-              Schools
-            </div>
+            
 
             <h1 className="text-5xl font-black leading-tight tracking-[-0.04em] text-[#111135] sm:text-6xl">
               Find the right school with confidence.
