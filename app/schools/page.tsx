@@ -229,7 +229,7 @@ export default function SchoolsPage() {
                     </Link>
                   </Button>
 
-                  <Button
+                  {/* <Button
                     asChild
                     variant="outline"
                     className="rounded-full border-slate-200 px-5 font-bold text-[#111135] hover:bg-[#F7F6FF]"
@@ -238,7 +238,7 @@ export default function SchoolsPage() {
                       <CalendarDays className="mr-2 h-4 w-4" />
                       Book Tour
                     </Link>
-                  </Button>
+                  </Button> */}
 
                   <FavoriteButton schoolId={school.id} />
                 </div>
