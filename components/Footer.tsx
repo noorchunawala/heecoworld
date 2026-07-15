@@ -40,7 +40,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-3">
               <img
-    src="/Footerlogo.png"
+    src="/FooterLogo.png"
     alt="Scoolyx"
     className="h-12 w-auto"
   />

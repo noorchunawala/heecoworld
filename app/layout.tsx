@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   type: "website",
   images: [
     {
-      url: "/Footerlogo.png",
+      url: "/FooterLogo.png",
       width: 1200,
       height: 630,
       alt: "Scoolyx",
