@@ -81,7 +81,7 @@ export default function HomePage() {
 
            <div className="mt-10 flex flex-col items-start gap-4">
   <Link
-    href="/complete-profile"
+    href="/practice-tests"
     className="inline-flex h-14 items-center justify-center rounded-full bg-[#111135] px-8 text-sm font-bold text-white shadow-xl shadow-slate-900/10 transition hover:bg-[#1D1B4F]"
   >
     Get Started

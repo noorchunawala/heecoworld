@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/SupabaseAdmin";
-import {
-  requireAuthenticatedUser,
-  requireOwnedLearnerAttempt,
-} from "@/lib/learnerAssessmentAccess";
+import { requireAttemptAccess } from "@/lib/learnerAssessmentAccess";
 
 type RouteContext = {
   params: Promise<{
@@ -61,11 +58,6 @@ export async function GET(
       );
     }
 
-    const auth = await requireAuthenticatedUser(request);
-
-    if (!auth.ok) {
-      return auth.response;
-    }
 
     const { data: attempt, error: attemptError } = await supabaseAdmin
       .from("test_attempts")
@@ -84,7 +76,9 @@ export async function GET(
         time_taken_seconds,
         score,
         total_marks,
-        percentage
+        percentage,
+        attempt_source,
+guest_session_id
       `)
       .eq("attempt_token", attemptToken)
       .single();
@@ -96,15 +90,38 @@ export async function GET(
       );
     }
 
-    const attemptAccess = await requireOwnedLearnerAttempt(
-      auth.userId,
-      attempt.learner_profile_id,
-      attempt.student_user_id
-    );
+   let userId: string | null = null;
 
-    if (!attemptAccess.ok) {
-      return attemptAccess.response;
-    }
+const authorization = request.headers.get("authorization");
+
+if (authorization?.startsWith("Bearer ")) {
+  const token = authorization.replace(/^Bearer\s+/i, "").trim();
+
+  if (token) {
+    const {
+      data: { user },
+    } = await supabaseAdmin.auth.getUser(token);
+
+    userId = user?.id ?? null;
+  }
+}
+
+const requestGuestSessionId =
+  request.cookies.get("scoolyx_guest_session")?.value ?? null;
+
+const attemptAccess = await requireAttemptAccess({
+  userId,
+  learnerProfileId: attempt.learner_profile_id,
+  studentUserId: attempt.student_user_id,
+  attemptSource:
+    attempt.attempt_source === "practice" ? "practice" : "school",
+  guestSessionId: attempt.guest_session_id,
+  requestGuestSessionId,
+});
+
+if (!attemptAccess.ok) {
+  return attemptAccess.response;
+}
 
     const { data: answers, error: answersError } = await supabaseAdmin
       .from("attempt_answers")

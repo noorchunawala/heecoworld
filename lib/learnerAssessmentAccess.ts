@@ -179,3 +179,96 @@ export async function requireOwnedLearnerAttempt(
 
   return requireOwnedActiveLearner(userId, learnerProfileId);
 }
+type AttemptAccessInput = {
+  userId?: string | null;
+  learnerProfileId: string | null;
+  studentUserId: string | null;
+  attemptSource: "school" | "practice";
+  guestSessionId: string | null;
+  requestGuestSessionId: string | null;
+};
+
+type AttemptAccessResult =
+  | {
+      ok: true;
+      accessType: "authenticated" | "guest";
+    }
+  | {
+      ok: false;
+      response: NextResponse;
+    };
+
+export async function requireAttemptAccess({
+  userId,
+  learnerProfileId,
+  studentUserId,
+  attemptSource,
+  guestSessionId,
+  requestGuestSessionId,
+}: AttemptAccessInput): Promise<AttemptAccessResult> {
+  if (attemptSource === "school") {
+    if (!userId) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          { error: "Unauthorized." },
+          { status: 401 }
+        ),
+      };
+    }
+
+    const ownedAttempt = await requireOwnedLearnerAttempt(
+      userId,
+      learnerProfileId,
+      studentUserId
+    );
+
+    if (!ownedAttempt.ok) {
+      return ownedAttempt;
+    }
+
+    return {
+      ok: true,
+      accessType: "authenticated",
+    };
+  }
+
+  if (
+    userId &&
+    learnerProfileId &&
+    studentUserId &&
+    studentUserId === userId
+  ) {
+    const ownedAttempt = await requireOwnedLearnerAttempt(
+      userId,
+      learnerProfileId,
+      studentUserId
+    );
+
+    if (ownedAttempt.ok) {
+      return {
+        ok: true,
+        accessType: "authenticated",
+      };
+    }
+  }
+
+  if (
+    guestSessionId &&
+    requestGuestSessionId &&
+    guestSessionId === requestGuestSessionId
+  ) {
+    return {
+      ok: true,
+      accessType: "guest",
+    };
+  }
+
+  return {
+    ok: false,
+    response: NextResponse.json(
+      { error: "You do not have access to this practice attempt." },
+      { status: 403 }
+    ),
+  };
+}

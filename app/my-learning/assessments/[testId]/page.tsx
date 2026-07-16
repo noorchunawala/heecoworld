@@ -172,36 +172,48 @@ const isPracticeMode = mode === "practice";
   const progressPercentage =
     questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0;
 
-  const getAccessToken = useCallback(async () => {
+ const getAccessToken = useCallback(async () => {
+  if (isPracticeMode) {
     const {
       data: { session },
     } = await supabase.auth.getSession();
 
-    if (!session?.access_token) {
-      router.replace(
-        `/login?redirectTo=${encodeURIComponent(
-          `/my-learning/assessments/${testId}?learnerId=${learnerId}${isPracticeMode ? "&mode=practice" : ""}`
-        )}`
-      );
-      return null;
-    }
+    return session?.access_token ?? null;
+  }
 
-    return session.access_token;
-  }, [learnerId, router, testId, isPracticeMode]);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    router.replace(
+      `/login?redirectTo=${encodeURIComponent(
+        `/my-learning/assessments/${testId}?learnerId=${learnerId}`
+      )}`
+    );
+    return null;
+  }
+
+  return session.access_token;
+}, [isPracticeMode, learnerId, router, testId]);
 
   const hydrateAttempt = useCallback(
     async (attemptToken: string) => {
-      const accessToken = await getAccessToken();
+     const accessToken = await getAccessToken();
 
-      if (!accessToken) {
-        return;
-      }
+if (!isPracticeMode && !accessToken) {
+  return;
+}
 
-      const response = await fetch(`/api/tests/attempts/${attemptToken}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+const headers: HeadersInit = {};
+
+if (accessToken) {
+  headers.Authorization = `Bearer ${accessToken}`;
+}
+
+const response = await fetch(`/api/tests/attempts/${attemptToken}`, {
+  headers,
+});
       const payload = await response.json();
 
       if (!response.ok) {
@@ -301,7 +313,7 @@ const isPracticeMode = mode === "practice";
       setResultQuestions(restoredQuestions);
       setScreen("result");
     },
-    [getAccessToken]
+    [getAccessToken,isPracticeMode]
   );
 
   const submitTest = useCallback(
@@ -319,11 +331,11 @@ const isPracticeMode = mode === "practice";
         return;
       }
 
-      const accessToken = await getAccessToken();
+     const accessToken = await getAccessToken();
 
-      if (!accessToken) {
-        return;
-      }
+if (!isPracticeMode && !accessToken) {
+  return;
+}
 
       try {
         setSubmitting(true);
@@ -332,9 +344,11 @@ const isPracticeMode = mode === "practice";
         const response = await fetch(`/api/tests/attempts/${attempt.token}/submit`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+  "Content-Type": "application/json",
+  ...(accessToken
+    ? { Authorization: `Bearer ${accessToken}` }
+    : {}),
+},
           body: JSON.stringify({
             submissionMode,
             answers: Object.entries(answers).map(([testQuestionId, selectedOption]) => ({
@@ -392,7 +406,7 @@ const isPracticeMode = mode === "practice";
   );
 
   useEffect(() => {
-    if (!testId || !learnerId) {
+    if (!testId || (!isPracticeMode && !learnerId)) {
       setPageError("Open this assessment from the learner's My Learning page.");
       setScreen("error");
       return;
@@ -410,10 +424,17 @@ const isPracticeMode = mode === "practice";
         setScreen("loading");
         setPageError("");
 
-        const accessToken = await getAccessToken();
-        if (!accessToken) return;
+       const accessToken = await getAccessToken();
 
-       const query = new URLSearchParams({ learnerId });
+if (!isPracticeMode && !accessToken) {
+  return;
+}
+
+       const query = new URLSearchParams();
+
+if (learnerId) {
+  query.set("learnerId", learnerId);
+}
 
 if (!isPracticeMode && storedAssessmentCode) {
   query.set("assessmentCode", storedAssessmentCode);
@@ -424,7 +445,9 @@ const loadUrl = isPracticeMode
   : `/api/learner-assessments/${testId}?${query.toString()}`;
 
 const response = await fetch(loadUrl, {
-  headers: { Authorization: `Bearer ${accessToken}` },
+  headers: accessToken
+    ? { Authorization: `Bearer ${accessToken}` }
+    : undefined,
 });
         const payload = await response.json();
 
@@ -495,9 +518,9 @@ const response = await fetch(loadUrl, {
   }, [attempt?.expiresAt, attempt?.status, screen, submitTest]);
 
   async function handleStartOrResume() {
-    if (!testId || !learnerId) {
-      return;
-    }
+   if (!testId || (!isPracticeMode && !learnerId)) {
+  return;
+}
 
     const savedAssessmentCode = window.sessionStorage
       .getItem(assessmentCodeStorageKey(learnerId, testId))
@@ -512,9 +535,9 @@ const response = await fetch(loadUrl, {
 
     const accessToken = await getAccessToken();
 
-    if (!accessToken) {
-      return;
-    }
+if (!isPracticeMode && !accessToken) {
+  return;
+}
 
     try {
       setStarting(true);
@@ -526,13 +549,15 @@ const response = await fetch(loadUrl, {
 
 const response = await fetch(startUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      body: JSON.stringify(
+       headers: {
+  "Content-Type": "application/json",
+  ...(accessToken
+    ? { Authorization: `Bearer ${accessToken}` }
+    : {}),
+},
+     body: JSON.stringify(
   isPracticeMode
-    ? { learnerId }
+    ? (learnerId ? { learnerId } : {})
     : { learnerId, assessmentCode: savedAssessmentCode }
 ),
       });
@@ -593,10 +618,10 @@ const response = await fetch(startUrl, {
 
     const accessToken = await getAccessToken();
 
-    if (!accessToken) {
-      setAnswers(previousAnswers);
-      return;
-    }
+if (!isPracticeMode && !accessToken) {
+  setAnswers(previousAnswers);
+  return;
+}
 
     try {
       setSavingQuestionId(questionId);
@@ -604,10 +629,12 @@ const response = await fetch(startUrl, {
 
       const response = await fetch(`/api/tests/attempts/${attempt.token}/answers`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
+       headers: {
+  "Content-Type": "application/json",
+  ...(accessToken
+    ? { Authorization: `Bearer ${accessToken}` }
+    : {}),
+},
         body: JSON.stringify({
           testQuestionId: questionId,
           selectedOption,
@@ -886,9 +913,43 @@ const response = await fetch(startUrl, {
                 <ResultCard label="Time taken" value={formatTakenTime(result.timeTakenSeconds)} />
               </div>
             )}
-            <Link href="/my-learning" className="mt-7 inline-flex rounded-full bg-[#071B33] px-5 py-3 text-sm font-semibold text-white">
-              Back to My Learning
-            </Link>
+           {isPracticeMode && !learnerId ? (
+  <div className="mt-7 rounded-3xl border border-[#5B3DF5]/20 bg-[#F7F6FF] p-5">
+    <h2 className="text-lg font-black text-[#111135]">
+      Save this result and track your progress
+    </h2>
+
+    <p className="mt-2 text-sm leading-6 text-slate-600">
+      Create a free learner profile to keep this score, compare future tests,
+      and see your strengths and weak areas.
+    </p>
+
+    <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+      <Link
+        href={`/login?redirectTo=${encodeURIComponent(
+          "/complete-profile?redirectTo=/my-learning/progress"
+        )}`}
+        className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#111135] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1D1B4F]"
+      >
+        Create free profile
+      </Link>
+
+      <Link
+        href="/practice-tests"
+        className="inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-[#111135] transition hover:bg-white/70"
+      >
+        Take another test
+      </Link>
+    </div>
+  </div>
+) : (
+  <Link
+    href="/my-learning"
+    className="mt-7 inline-flex rounded-full bg-[#071B33] px-5 py-3 text-sm font-semibold text-white"
+  >
+    Back to My Learning
+  </Link>
+)}
           </section>
           {showExplanations && resultQuestions.length > 0 && (
             <section className="mt-6 space-y-4">

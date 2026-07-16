@@ -65,7 +65,8 @@ export async function POST(request: NextRequest) {
     }
 
     const accountEmail = auth.user.email?.trim().toLowerCase() || "";
-
+const guestSessionId =
+  request.cookies.get("scoolyx_guest_session")?.value ?? null;
     if (!accountEmail) {
       return NextResponse.json(
         { error: "Your account does not have a valid email address." },
@@ -448,6 +449,53 @@ school_last_changed_at: now,
 
     if (profileError) {
       console.error("Learner onboarding account-profile save error:", profileError);
+  if (guestSessionId) {
+  const { data: guestAttempts, error: guestAttemptsError } =
+    await supabaseAdmin
+      .from("test_attempts")
+      .select(`
+        id,
+        tests!inner (
+          curriculum_id,
+          curriculum_level_id,
+          access_mode
+        )
+      `)
+      .eq("attempt_source", "practice")
+      .eq("guest_session_id", guestSessionId)
+      .in("status", ["submitted", "auto_submitted"])
+      .eq("tests.access_mode", "practice")
+      .eq("tests.curriculum_id", learner.curriculum_id)
+      .eq("tests.curriculum_level_id", learner.curriculum_level_id);
+
+  if (guestAttemptsError) {
+    console.error(
+      "Guest practice claim lookup error:",
+      guestAttemptsError
+    );
+  } else {
+    const attemptIds = (guestAttempts ?? []).map(
+      (attempt) => attempt.id
+    );
+
+    if (attemptIds.length > 0) {
+      const { error: claimError } = await supabaseAdmin
+        .from("test_attempts")
+        .update({
+          learner_profile_id: learner.id,
+          student_user_id: auth.user.id,
+          student_name: learner.full_name,
+          guest_session_id: null,
+        })
+        .in("id", attemptIds)
+        .eq("attempt_source", "practice");
+
+      if (claimError) {
+        console.error("Guest practice claim error:", claimError);
+      }
+    }
+  }
+}
 
       return NextResponse.json(
         {

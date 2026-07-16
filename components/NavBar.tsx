@@ -9,7 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useUI } from "@/components/UIProvider";
 
 const navLinks = [
-  { label: "Learning", href: "/my-learning" },
+  { label: "Learning", href: "/practice-tests" },
   { label: "Schools", href: "/schools" },
   { label: "For Schools", href: "/for-schools" },
 ];

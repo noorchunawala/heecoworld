@@ -1,35 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/SupabaseAdmin";
-import {
-  requireAuthenticatedUser,
-  requireOwnedActiveLearner,
-} from "@/lib/learnerAssessmentAccess";
+import { requireOwnedActiveLearner } from "@/lib/learnerAssessmentAccess";
 
 type RouteContext = {
   params: Promise<{ testId: string }>;
 };
 
+async function getOptionalUserId(request: NextRequest) {
+  const authorization = request.headers.get("authorization");
+
+  if (!authorization?.startsWith("Bearer ")) {
+    return null;
+  }
+
+  const token = authorization.replace(/^Bearer\s+/i, "").trim();
+
+  if (!token) {
+    return null;
+  }
+
+  const {
+    data: { user },
+  } = await supabaseAdmin.auth.getUser(token);
+
+  return user?.id ?? null;
+}
+
 export async function GET(request: NextRequest, { params }: RouteContext) {
   try {
     const { testId } = await params;
-    const learnerId = new URL(request.url).searchParams.get("learnerId")?.trim();
+    const learnerId =
+      new URL(request.url).searchParams.get("learnerId")?.trim() ?? "";
 
-    if (!testId || !learnerId) {
+    if (!testId) {
       return NextResponse.json(
-        { error: "Practice test and learner are required." },
+        { error: "Practice test is required." },
         { status: 400 }
       );
     }
 
-    const auth = await requireAuthenticatedUser(request);
-    if (!auth.ok) return auth.response;
+    const userId = await getOptionalUserId(request);
 
-    const learnerAccess = await requireOwnedActiveLearner(auth.userId, learnerId);
-    if (!learnerAccess.ok) return learnerAccess.response;
+    let learner:
+      | {
+          id: string;
+          full_name: string;
+          grade: string | null;
+          curriculum_id: string | null;
+          curriculum_level_id: string | null;
+        }
+      | null = null;
 
-    const learner = learnerAccess.learner;
+    /*
+     * Logged-in learner flow
+     */
+    if (userId && learnerId) {
+      const learnerAccess = await requireOwnedActiveLearner(
+        userId,
+        learnerId
+      );
 
-    const { data: test, error: testError } = await supabaseAdmin
+      if (!learnerAccess.ok) {
+        return learnerAccess.response;
+      }
+
+      learner = learnerAccess.learner;
+    }
+
+    let testQuery = supabaseAdmin
       .from("tests")
       .select(`
         id,
@@ -46,42 +84,133 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
         curricula ( id, display_name )
       `)
       .eq("id", testId)
-      .eq("created_by_user_id", auth.userId)
       .eq("access_mode", "practice")
-      .eq("status", "published")
-      .eq("curriculum_id", learner.curriculum_id)
-      .eq("curriculum_level_id", learner.curriculum_level_id)
-      .maybeSingle();
+      .eq("status", "published");
+
+    /*
+     * Preserve the existing authenticated learner restrictions.
+     */
+    if (userId && learner) {
+      testQuery = testQuery
+        .eq("created_by_user_id", userId)
+        .eq("curriculum_id", learner.curriculum_id)
+        .eq("curriculum_level_id", learner.curriculum_level_id);
+    }
+
+    const { data: test, error: testError } =
+      await testQuery.maybeSingle();
 
     if (testError) {
       console.error("Practice test lookup error:", testError);
-      return NextResponse.json({ error: "Could not load practice test." }, { status: 500 });
+
+      return NextResponse.json(
+        { error: "Could not load practice test." },
+        { status: 500 }
+      );
     }
 
     if (!test) {
-      return NextResponse.json({ error: "Practice test not found." }, { status: 404 });
+      return NextResponse.json(
+        { error: "Practice test not found." },
+        { status: 404 }
+      );
     }
 
-    const { data: questions, error: questionsError } = await supabaseAdmin
-      .from("test_questions")
-      .select("id, order_number, question_snapshot, marks")
-      .eq("test_id", test.id)
-      .order("order_number", { ascending: true });
+    const { data: questions, error: questionsError } =
+      await supabaseAdmin
+        .from("test_questions")
+        .select("id, order_number, question_snapshot, marks")
+        .eq("test_id", test.id)
+        .order("order_number", { ascending: true });
 
     if (questionsError) {
       console.error("Practice questions lookup error:", questionsError);
-      return NextResponse.json({ error: "Could not load practice questions." }, { status: 500 });
+
+      return NextResponse.json(
+        { error: "Could not load practice questions." },
+        { status: 500 }
+      );
     }
 
-    const { data: attempt } = await supabaseAdmin
-      .from("test_attempts")
-      .select("id, attempt_token, status, started_at, expires_at, submitted_at, time_taken_seconds, score, total_marks, percentage")
-      .eq("test_id", test.id)
-      .eq("learner_profile_id", learner.id)
-      .maybeSingle();
-const curriculum = test.curricula as any;
+    let attempt = null;
+
+    /*
+     * Logged-in learner attempt
+     */
+    if (learner) {
+      const { data, error } = await supabaseAdmin
+        .from("test_attempts")
+        .select(`
+          id,
+          attempt_token,
+          status,
+          started_at,
+          expires_at,
+          submitted_at,
+          time_taken_seconds,
+          score,
+          total_marks,
+          percentage
+        `)
+        .eq("test_id", test.id)
+        .eq("learner_profile_id", learner.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Learner practice attempt lookup error:", error);
+
+        return NextResponse.json(
+          { error: "Could not load the existing practice attempt." },
+          { status: 500 }
+        );
+      }
+
+      attempt = data;
+    } else {
+      /*
+       * Guest practice attempt
+       */
+      const guestSessionId =
+        request.cookies.get("scoolyx_guest_session")?.value ?? null;
+
+      if (guestSessionId) {
+        const { data, error } = await supabaseAdmin
+          .from("test_attempts")
+          .select(`
+            id,
+            attempt_token,
+            status,
+            started_at,
+            expires_at,
+            submitted_at,
+            time_taken_seconds,
+            score,
+            total_marks,
+            percentage
+          `)
+          .eq("test_id", test.id)
+          .eq("attempt_source", "practice")
+          .eq("guest_session_id", guestSessionId)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Guest practice attempt lookup error:", error);
+
+          return NextResponse.json(
+            { error: "Could not load the existing practice attempt." },
+            { status: 500 }
+          );
+        }
+
+        attempt = data;
+      }
+    }
+
+    const curriculum = test.curricula as any;
+
     return NextResponse.json({
       availability: "available",
+
       test: {
         id: test.id,
         title: test.title,
@@ -97,13 +226,21 @@ const curriculum = test.curricula as any;
         totalMarks: test.total_marks,
         instructions: test.instructions,
       },
-      learner: {
-        id: learner.id,
-        fullName: learner.full_name,
-        grade: learner.grade,
-      },
-      questions: (questions || []).map((item: any) => {
-        const snapshot = item.question_snapshot || {};
+
+      learner: learner
+        ? {
+            id: learner.id,
+            fullName: learner.full_name,
+            grade: learner.grade,
+          }
+        : {
+            id: "",
+            fullName: "Learner",
+            grade: test.class_level,
+          },
+
+      questions: (questions ?? []).map((item: any) => {
+        const snapshot = item.question_snapshot ?? {};
 
         return {
           id: item.id,
@@ -111,10 +248,11 @@ const curriculum = test.curricula as any;
           questionType: snapshot.question_type,
           difficulty: snapshot.difficulty,
           questionText: snapshot.question_text,
-          options: snapshot.options || {},
-          marks: item.marks || 1,
+          options: snapshot.options ?? {},
+          marks: item.marks ?? 1,
         };
       }),
+
       learnerAttempt: attempt
         ? {
             id: attempt.id,
@@ -135,6 +273,7 @@ const curriculum = test.curricula as any;
     });
   } catch (error) {
     console.error("Unexpected practice test load error:", error);
+
     return NextResponse.json(
       { error: "Something went wrong while loading practice test." },
       { status: 500 }
