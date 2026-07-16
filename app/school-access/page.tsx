@@ -106,7 +106,11 @@ return;
 
       <div className="mb-8 text-center">
         <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-3xl bg-[#111135] text-2xl font-black text-white shadow-lg">
-          S
+                <img
+    src="/favicon-32x32.png"
+    alt="Scoolyx"
+    className="h-12 w-auto"
+  />
         </div>
 
         <h1 className="text-4xl font-black tracking-tight text-[#111135]">
