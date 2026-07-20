@@ -283,7 +283,7 @@ export default function AccountPanel({ open, onClose }: Props) {
             </p>
 
             <a
-              href="mailto:info@heecoworld.com"
+              href="mailto:info@scoolyx.com"
               className="mt-4 inline-flex rounded-full bg-[#111135] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#1D1B4F]"
             >
               Contact Scoolyx

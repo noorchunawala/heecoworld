@@ -30,7 +30,7 @@ export function buildParentConfirmationEmail(input: ParentConfirmationEmailInput
           <p>The selected school(s) will contact you directly using the details you provided.</p>
 
           <div style="margin-top:24px; padding:16px; background:#f8f1e7; border-radius:14px;">
-            If you do not hear back within 3 working days, please contact us at info@heecoworld.com.
+            If you do not hear back within 3 working days, please contact us at info@scoolyx.com.
           </div>
 
           <p style="margin-top:24px; font-size:13px; color:#64748b;">

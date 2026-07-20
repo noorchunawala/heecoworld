@@ -7,6 +7,7 @@ import EnquiryModal from "@/components/EnquiryModel";
 import { AuthProvider } from "@/components/AuthProvider";
 import ProfileCompletionGuard from "@/components/ProfileCompletionGuard";
 import { UIProvider } from "@/components/UIProvider";
+import Script from "next/script";
 
 
 export const metadata: Metadata = {
@@ -51,6 +52,9 @@ twitter: {
 },
 
   metadataBase: new URL("https://scoolyx.com"),
+    alternates: {
+    canonical: "https://scoolyx.com",
+  }
 };
 
 export default function RootLayout({
@@ -66,6 +70,15 @@ export default function RootLayout({
     <ProfileCompletionGuard />
     <Navbar />
     {children}
+    <Script id="microsoft-clarity" strategy="afterInteractive">
+  {`
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xpkpimfvx7");
+  `}
+</Script>
     <Footer />
     <EnquiryModal />
   </UIProvider>

@@ -305,7 +305,7 @@ export default function HomePage() {
             ].map(([title, text, Icon]: any) => (
               <Link
                 key={title}
-                href={title === "Compare Schools" ? "/compare" : title === "Book a Tour" ? "/school-tour" : "/schools"}
+                href={title === "Compare Schools" ? "/compare" : title === "Book a Tour" ? "/schools" : "/schools"}
                 className="rounded-3xl bg-white p-7 shadow-lg shadow-violet-500/5 transition hover:-translate-y-1 hover:shadow-xl"
               >
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F1EEFF] text-[#5B3DF5]">

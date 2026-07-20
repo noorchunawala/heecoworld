@@ -105,10 +105,10 @@ async function sendTourEmails(requestId: string, payload: TourPayload ,reference
     if (payload.email) {
       emailTasks.push(
         resend.emails.send({
-          from: "HeecoWorld <info@heecoworld.com>",
+          from: "Scoolyx <info@scoolyx.com>",
           to: payload.email,
-          replyTo: "info@heecoworld.com",
-          subject: `Your School Tour Request | ${referenceCode} | HeecoWorld`,
+          replyTo: "info@scoolyx.com",
+          subject: `Your School Tour Request | ${referenceCode} | Scoolyx`,
           html: buildParentConfirmationEmail({
             parentName: payload.parent_name,
             schools: (schools || []).map((school) => school.name),

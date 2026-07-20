@@ -72,10 +72,10 @@ export async function POST(request: Request) {
     after(async () => {
       try {
         await resend.emails.send({
-          from: "HeecoWorld <info@heecoworld.com>",
-          to: "info@heecoworld.com",
+          from: "Scoolyx <info@scoolyx.com>",
+          to: "info@scoolyx.com",
           replyTo: payload.email,
-          subject: `New School Partner Request | ${payload.schoolName} | HeecoWorld`,
+          subject: `New School Partner Request | ${payload.schoolName} | Scoolyx`,
           html: buildPartnerEmail(payload),
         });
 
