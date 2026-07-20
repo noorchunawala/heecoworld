@@ -8,6 +8,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import ProfileCompletionGuard from "@/components/ProfileCompletionGuard";
 import { UIProvider } from "@/components/UIProvider";
 import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 
 export const metadata: Metadata = {
@@ -83,6 +84,7 @@ export default function RootLayout({
     <EnquiryModal />
   </UIProvider>
 </AuthProvider>
+<GoogleAnalytics gaId="G-W0NK9JVRNF" />
         </body>
     </html>
   );
